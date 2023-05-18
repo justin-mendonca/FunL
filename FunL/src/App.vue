@@ -18,17 +18,15 @@ nav {
   display: flex;
   justify-content: center;
   height: 5vh;
-  background-color: black;
 }
 
 .navtab {
   height: 100%;
-  background-color: white;
-  text-align: center;
+  display: flex;
+  align-items: center;
 }
 
 nav a {
-  display: inline-block;
   padding: 0 1rem;
   border-left: 1px solid var(--color-border);
 }
