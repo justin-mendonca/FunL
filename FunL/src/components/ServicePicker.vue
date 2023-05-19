@@ -6,23 +6,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { inject } from 'vue'
 import axios from 'axios'
 
 interface Services {
-  Netflix: string
+  Netflix: boolean
 }
 
-export default defineComponent({
+export default {
   name: 'ServicePicker',
-  props: {
-    services: {
-      type: Object as () => Services,
-      required: true
-    }
-  },
-  setup(props) {
-    const servicesRef = ref(props.services)
+  setup() {
+    const services = inject<Services | undefined>('services')!
 
     const incrementCounter = async () => {
       const options = {
@@ -43,16 +37,16 @@ export default defineComponent({
     }
 
     const test = () => {
-      servicesRef.value.Netflix = 'True'
+      services.Netflix = !services.Netflix
     }
 
     return {
       incrementCounter,
       test,
-      services: servicesRef
+      services
     }
   }
-})
+}
 </script>
 
 <style scoped>

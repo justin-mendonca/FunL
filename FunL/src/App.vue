@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import { reactive, provide } from 'vue';
 
 const services = reactive({
-  Netflix: 'False',
+  Netflix: false,
 });
 
 provide('services', services);

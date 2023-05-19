@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import ServicePicker from '@/components/ServicePicker.vue'
-
-defineProps({
-  services: Object,
-});
 
 </script>
 
 <template>
   <div class="services">
-    <ServicePicker :services="services" />
+    <ServicePicker/>
   </div>
 </template>
 
