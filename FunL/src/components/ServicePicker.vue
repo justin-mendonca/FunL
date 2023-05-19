@@ -1,28 +1,58 @@
 <template>
   <div class="service-picker">
-    <button @click="incrementCounter">Click me</button>
-    <p>Counter: {{ counter }}</p>
+    <button @click="test">Click me</button>
+    <p>Counter: {{ services.Netflix }}</p>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue'
+import axios from 'axios'
+
+interface Services {
+  Netflix: string
+}
 
 export default defineComponent({
   name: 'ServicePicker',
-  setup() {
-    const counter = ref(0);
+  props: {
+    services: {
+      type: Object as () => Services,
+      required: true
+    }
+  },
+  setup(props) {
+    const servicesRef = ref(props.services)
 
-    const incrementCounter = () => {
-      counter.value++;
-    };
+    const incrementCounter = async () => {
+      const options = {
+        method: 'GET',
+        url: 'https://streaming-availability.p.rapidapi.com/v2/services',
+        headers: {
+          'X-RapidAPI-Key': '6120f55f4emsh1386c664758d179p13f11fjsn88c946ecbd9b',
+          'X-RapidAPI-Host': 'streaming-availability.p.rapidapi.com'
+        }
+      }
+
+      try {
+        const response = await axios.request(options)
+        console.log(response.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    const test = () => {
+      servicesRef.value.Netflix = 'True'
+    }
 
     return {
-      counter,
       incrementCounter,
-    };
-  },
-});
+      test,
+      services: servicesRef
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -34,5 +64,4 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
 }
-
 </style>

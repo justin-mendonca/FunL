@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { reactive, provide } from 'vue';
+
+const services = reactive({
+  Netflix: 'False',
+});
+
+provide('services', services);
 </script>
 
 <template>
@@ -10,7 +17,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/about" class="navtab">About</RouterLink>
       </nav>
     </div>
-  <RouterView class="view"/>
+  <RouterView :services="services" class="view"/>
 </template>
 
 <style scoped>
