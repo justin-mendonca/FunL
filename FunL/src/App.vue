@@ -4,6 +4,14 @@ import { reactive, provide } from 'vue';
 
 const services = reactive({
   Netflix: false,
+  Apple: false,
+  Hulu: false,
+  Prime: false,
+  Disney: false,
+  HBO: false,
+  Peacock: false,
+  Showtime: false,
+  Starz: false,
 });
 
 provide('services', services);

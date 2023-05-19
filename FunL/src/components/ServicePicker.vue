@@ -1,47 +1,43 @@
 <template>
   <div class="service-picker">
-    <button @click="test">Click me</button>
-    <p>Counter: {{ services.Netflix }}</p>
+    <div id="services-container">
+      <div v-for="(value, key) in services" :key="key">
+        <!-- <StreamingService :serviceName="key" :serviceValue="value"/> -->
+        <StreamingService />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { inject } from 'vue'
-import axios from 'axios'
+import StreamingService from '@/components/StreamingService.vue'
 
 interface Services {
-  Netflix: boolean
+  Netflix: boolean,
+  Apple: boolean,
+  Hulu: boolean,
+  Prime: boolean,
+  Disney: boolean,
+  HBO: boolean,
+  Peacock: boolean,
+  Showtime: boolean,
+  Starz: boolean,
 }
 
 export default {
   name: 'ServicePicker',
+  components: {
+    StreamingService
+  },
   setup() {
     const services = inject<Services | undefined>('services')!
-
-    const incrementCounter = async () => {
-      const options = {
-        method: 'GET',
-        url: 'https://streaming-availability.p.rapidapi.com/v2/services',
-        headers: {
-          'X-RapidAPI-Key': '6120f55f4emsh1386c664758d179p13f11fjsn88c946ecbd9b',
-          'X-RapidAPI-Host': 'streaming-availability.p.rapidapi.com'
-        }
-      }
-
-      try {
-        const response = await axios.request(options)
-        console.log(response.data)
-      } catch (error) {
-        console.error(error)
-      }
-    }
 
     const test = () => {
       services.Netflix = !services.Netflix
     }
 
     return {
-      incrementCounter,
       test,
       services
     }
