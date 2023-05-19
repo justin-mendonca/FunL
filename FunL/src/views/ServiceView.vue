@@ -1,16 +1,16 @@
 <script setup lang="ts">
-
+import ServicePicker from '@/components/ServicePicker.vue';  
 </script>
 
 <template>
-  <div class="home">
-    <button>Get Data</button>
+  <div class="services">
+    <ServicePicker/>
   </div>
 </template>
 
 <style>
 @media (min-width: 1024px) {
-  .home {
+  .services {
     background-color: grey;
     display: flex;
     flex-direction: column;
