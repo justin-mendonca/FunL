@@ -38,7 +38,6 @@ export default {
     const services = inject<Services | undefined>('services')!
 
     const toggleService = () => {
-      console.log('test')
       services[props.serviceName as keyof Services] = !services[props.serviceName as keyof Services]
     }
 

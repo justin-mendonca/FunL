@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import axios from 'axios'
+const apiKey = import.meta.env.VITE_API_KEY;
+const host = import.meta.env.VITE_HOST;
 
 const incrementCounter = async () => {
   const options = {
     method: 'GET',
     url: 'https://streaming-availability.p.rapidapi.com/v2/services',
     headers: {
-      'X-RapidAPI-Key': '6120f55f4emsh1386c664758d179p13f11fjsn88c946ecbd9b',
-      'X-RapidAPI-Host': 'streaming-availability.p.rapidapi.com'
+      'X-RapidAPI-Key': apiKey,
+      'X-RapidAPI-Host': host
     }
   }
 
