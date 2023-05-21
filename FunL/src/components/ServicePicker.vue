@@ -2,7 +2,7 @@
   <div class="service-picker">
     <div id="services-container">
       <div v-for="(value, key) in services" :key="key">
-        <StreamingService :serviceName="key" :serviceValue="value"/>
+        <StreamingService :serviceName="key"/>
       </div>
     </div>
   </div>

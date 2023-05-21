@@ -1,24 +1,51 @@
 <template>
   <div id="img-container">
-    <img :src="getServiceLogo(serviceName!)" :alt="`${serviceName} logo`" class="serviceImage"/>
+    <img
+      :src="getServiceLogo(serviceName!)"
+      :alt="`${serviceName} logo`"
+      class="serviceImage"
+      @click="toggleService"
+    />
+    <img v-if="services[serviceName as keyof Services]" id="checkmark" src="../assets/Checkmark.png" alt="Green checkmark">
   </div>
 </template>
 
 <script lang="ts">
-import { inject, computed } from 'vue'
+import { inject } from 'vue'
+
+interface Services {
+  Netflix: boolean
+  Apple: boolean
+  Hulu: boolean
+  Prime: boolean
+  Disney: boolean
+  HBO: boolean
+  Peacock: boolean
+  Showtime: boolean
+  Starz: boolean
+}
 
 export default {
   name: 'StreamingService',
   props: {
-    serviceName: String,
-    serviceValue: Boolean
+    serviceName: String
   },
-  setup() {
+  setup(props) {
     const getServiceLogo = (serviceName: String) => {
       return new URL(`../assets/logos/${serviceName}_logo.webp`, import.meta.url).href
     }
+
+    const services = inject<Services | undefined>('services')!
+
+    const toggleService = () => {
+      console.log('test')
+      services[props.serviceName as keyof Services] = !services[props.serviceName as keyof Services]
+    }
+
     return {
-      getServiceLogo
+      getServiceLogo,
+      toggleService,
+      services
     }
   }
 }
@@ -28,10 +55,18 @@ export default {
 #img-container {
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: end;
 }
 
 .serviceImage {
   height: 100%;
   width: 100%;
+}
+
+#checkmark {
+  position: absolute;
+  height: 20px;
+  width: 20px;
 }
 </style>
