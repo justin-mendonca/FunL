@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import axios from 'axios'
-const apiKey = import.meta.env.VITE_API_KEY;
-const host = import.meta.env.VITE_HOST;
+const apiKey = import.meta.env.VITE_API_KEY
+const host = import.meta.env.VITE_HOST
 
 interface Services {
   Netflix: boolean
@@ -16,6 +16,7 @@ interface Services {
   Starz: boolean
 }
 
+let searchResults = ref([])
 const services = inject<Services | undefined>('services')!
 
 const formatServices = () => {
@@ -30,33 +31,50 @@ const formatServices = () => {
 }
 
 const getData = async () => {
-  const formattedServices = formatServices();
-  
-  const options = {
-    method: 'GET',
-    url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
-    params: {
-      country: 'us',
-      services: formattedServices
-    },
-    headers: {
-      'X-RapidAPI-Key': apiKey,
-      'X-RapidAPI-Host': host
+  const formattedServices = formatServices()
+
+  const getPage = async (nextCursor = null) => {
+    const options = {
+      method: 'GET',
+      url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
+      params: {
+        country: 'us',
+        services: formattedServices,
+        cursor: nextCursor
+      },
+      headers: {
+        'X-RapidAPI-Key': apiKey,
+        'X-RapidAPI-Host': host
+      }
+    }
+
+    try {
+      const response = await axios.request(options)
+      const { data } = response
+      searchResults.value = searchResults.value.concat(data.result)
+
+      if (data.hasMore) {
+        await getPage(data.nextCursor)
+      } else {
+        console.log(searchResults)
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
-  try {
-    const response = await axios.request(options)
-    console.log(response.data)
-  } catch (error) {
-    console.error(error)
-  }
+  await getPage()
+}
+
+const logResults = () => {
+  console.log(searchResults)
 }
 </script>
 
 <template>
   <div class="home">
     <button @click="getData">Get Data</button>
+    <button @click="logResults">Get Data</button>
   </div>
 </template>
 
