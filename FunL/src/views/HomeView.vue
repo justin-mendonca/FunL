@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue'
 import axios from 'axios'
-import Title from '@/components/Title.vue'
-
+import TitleImage from '@/components/TitleImage.vue'
+import TitleDetails from '@/components/TitleDetails.vue'
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
@@ -19,6 +19,8 @@ interface Services {
 }
 
 let searchResults = ref([])
+// Cannot guarantee that shape of title object will not change since it is fetched from API
+const selectedTitle = ref<any>(null)
 const services = inject<Services | undefined>('services')!
 
 const formatServices = () => {
@@ -99,15 +101,28 @@ const logResults = () => {
   searchResults.value.splice(4)
   console.log(searchResults)
 }
+
+const handleTitleClick = (title: any) => {
+  selectedTitle.value = title
+}
+
+const handleBackClick = () => {
+  selectedTitle.value = null
+}
 </script>
 
 <template>
   <div class="home">
-    <button @click="getDataTest">Get Data</button>
-    <button @click="logResults">LogResults</button>
-    <div id="title-container">
-      <div v-for="title in searchResults" :key="title">
-        <Title :title="title" />
+    <div v-if="selectedTitle">
+      <TitleDetails :title="selectedTitle" @backClick="handleBackClick" />
+    </div>
+    <div v-if="!selectedTitle" id="title-not-selected">
+      <button @click="getDataTest">Get Data</button>
+      <button @click="logResults">LogResults</button>
+      <div id="title-image-container">
+        <div v-for="title in searchResults" :key="title">
+          <TitleImage :title="title" @titleClick="handleTitleClick" />
+        </div>
       </div>
     </div>
   </div>
@@ -122,7 +137,7 @@ const logResults = () => {
     align-items: center;
   }
 
-  #title-container {
+  #title-image-container {
     display: grid;
     width: 100%;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
