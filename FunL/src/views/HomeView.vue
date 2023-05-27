@@ -7,15 +7,16 @@ const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
 interface Services {
-  Netflix: boolean
-  Apple: boolean
-  Hulu: boolean
-  Prime: boolean
-  Disney: boolean
-  HBO: boolean
-  Peacock: boolean
-  Showtime: boolean
-  Starz: boolean
+  netflix: boolean
+  apple: boolean
+  hulu: boolean
+  prime: boolean
+  disney: boolean
+  hbo: boolean
+  peacock: boolean
+  showtime: boolean
+  starz: boolean
+  paramount: boolean
 }
 
 let searchResults = ref([])

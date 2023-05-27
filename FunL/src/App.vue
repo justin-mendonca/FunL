@@ -3,15 +3,16 @@ import { RouterLink, RouterView } from 'vue-router'
 import { reactive, provide } from 'vue';
 
 const services = reactive({
-  Netflix: false,
-  Apple: false,
-  Hulu: false,
-  Prime: false,
-  Disney: false,
-  HBO: false,
-  Peacock: false,
-  Showtime: false,
-  Starz: false,
+  netflix: false,
+  apple: false,
+  hulu: false,
+  prime: false,
+  disney: false,
+  hbo: false,
+  peacock: false,
+  showtime: false,
+  starz: false,
+  paramount: false,
 });
 
 provide('services', services);

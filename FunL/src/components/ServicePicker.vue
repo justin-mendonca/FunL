@@ -13,15 +13,16 @@ import { inject } from 'vue'
 import StreamingService from '@/components/StreamingService.vue'
 
 interface Services {
-  Netflix: boolean,
-  Apple: boolean,
-  Hulu: boolean,
-  Prime: boolean,
-  Disney: boolean,
-  HBO: boolean,
-  Peacock: boolean,
-  Showtime: boolean,
-  Starz: boolean,
+  netflix: boolean
+  apple: boolean
+  hulu: boolean
+  prime: boolean
+  disney: boolean
+  hbo: boolean
+  peacock: boolean
+  showtime: boolean
+  starz: boolean
+  paramount: boolean
 }
 
 export default {
@@ -32,12 +33,7 @@ export default {
   setup() {
     const services = inject<Services | undefined>('services')!
 
-    const test = () => {
-      services.Netflix = !services.Netflix
-    }
-
     return {
-      test,
       services
     }
   }

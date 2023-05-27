@@ -16,8 +16,11 @@
           <p>Watch on:</p>
           <div id="available-services">
             <button @click="filterServices">See service info</button>
-            <div v-for="service in props.title?.streamingInfo.us" :key="service">
-              {{ service }}
+            <div v-for="service in availableServices" :key="service">
+              <img
+                :src="getServiceLogo(service.name)"
+                :alt="`${service.name} logo`"
+              />
             </div>
           </div>
         </div>
@@ -30,10 +33,10 @@
 import { computed, ref, onMounted } from 'vue'
 
 onMounted(() => {
-    filterServices()
+  filterServices()
 })
 
-const availableServices = ref<any>([])
+const availableServices = ref<any>(null)
 const props = defineProps({
   title: {
     type: Object
@@ -44,18 +47,22 @@ const formattedCast = computed(() => {
   return props.title?.cast.join(', ')
 })
 
-// CONTINUE HERE TRYING TO FIGURE OUT HOW TO FILTER SERVICES
+// FIX TYPE SAFETY
+// Filters out services where you have to purchase/rent the title
 const filterServices = () => {
-  const servicesObj = props.title?.streamingInfo.us
-  for (const service in servicesObj) {
-    console.log(servicesObj[service])
-    if (servicesObj[service][0].type == 'subscription') {
-        availableServices.value.push({service: servicesObj[service]})
-    }
-  }
+  availableServices.value = Object.entries(props.title?.streamingInfo.us)
+    .filter(([, value]) => value.some((obj) => obj.type === 'subscription'))
+    .map(([key, value]) => {
+      const obj = value.find((obj) => obj.type === 'subscription')
+      return { ...obj, name: key }
+    })
+
+  console.log(availableServices.value)
 }
 
-
+const getServiceLogo = (serviceName: String) => {
+  return new URL(`../assets/logos/${serviceName}_logo.webp`, import.meta.url).href
+}
 </script>
 
 <style scoped>
