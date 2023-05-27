@@ -15,12 +15,10 @@
         <div id="link-container">
           <p>Watch on:</p>
           <div id="available-services">
-            <button @click="filterServices">See service info</button>
             <div v-for="service in availableServices" :key="service">
-              <img
-                :src="getServiceLogo(service.name)"
-                :alt="`${service.name} logo`"
-              />
+              <a :href="service.link" target="_blank" rel="noreferrer noopener">
+                <img :src="getServiceLogo(service.name)" :alt="`${service.name} logo`" class="service-imglink"/>
+              </a>
             </div>
           </div>
         </div>
@@ -60,6 +58,7 @@ const filterServices = () => {
   console.log(availableServices.value)
 }
 
+// Reused function from StreamingService.vue, refactor to prevent duplicate code
 const getServiceLogo = (serviceName: String) => {
   return new URL(`../assets/logos/${serviceName}_logo.webp`, import.meta.url).href
 }
@@ -68,6 +67,7 @@ const getServiceLogo = (serviceName: String) => {
 <style scoped>
 .selected-title {
   width: 100vw;
+  box-sizing: border-box;
   padding: 1%;
 }
 
@@ -78,6 +78,7 @@ const getServiceLogo = (serviceName: String) => {
 
 #title-detail-container {
   display: flex;
+  min-width: 100%;
 }
 
 #title-image {
@@ -90,5 +91,24 @@ const getServiceLogo = (serviceName: String) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 1;
+}
+
+#link-container {
+    width: 100%;
+    text-align: center;
+}
+
+#available-services {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.service-imglink {
+    width: 300px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 3%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0.19);
 }
 </style>
