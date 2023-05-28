@@ -12,7 +12,6 @@ import ServicePicker from '@/components/ServicePicker.vue'
 <style>
 @media (min-width: 1024px) {
   .services {
-    background-color: grey;
     display: flex;
     flex-direction: column;
     align-items: center;

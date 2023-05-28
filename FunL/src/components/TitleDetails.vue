@@ -1,15 +1,15 @@
 <template>
   <div class="selected-title">
-    <button @click="$emit('backClick')">Back</button>
+    <ThemeButton label="Back" icon="pi pi-arrow-left" size="small" @click="$emit('backClick')" />
     <p id="title-text">{{ props.title?.title }}</p>
     <div id="title-detail-container">
       <div id="title-image">
-        <img :src="props.title?.posterURLs[342]" alt="Movie/series poster" />
+        <img id="poster" :src="props.title?.posterURLs[342]" alt="Movie/series poster" />
         <p>{{ props.title?.tagline }}</p>
       </div>
       <div id="title-details">
-        <p>Description</p>
         <p>{{ props.title?.overview }}</p>
+        <br>
         <p>Cast: {{ formattedCast }}</p>
         <p>IMDb rating: {{ props.title?.imdbRating }}</p>
         <div id="link-container">
@@ -17,7 +17,11 @@
           <div id="available-services">
             <div v-for="service in availableServices" :key="service">
               <a :href="service.link" target="_blank" rel="noreferrer noopener">
-                <img :src="getServiceLogo(service.name)" :alt="`${service.name} logo`" class="service-imglink"/>
+                <img
+                  :src="getServiceLogo(service.name)"
+                  :alt="`${service.name} logo`"
+                  class="service-imglink"
+                />
               </a>
             </div>
           </div>
@@ -74,6 +78,8 @@ const getServiceLogo = (serviceName: String) => {
 #title-text {
   text-align: center;
   margin-bottom: 2%;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 #title-detail-container {
@@ -85,30 +91,37 @@ const getServiceLogo = (serviceName: String) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 35%;
+}
+
+#poster {
+  border-radius: 2%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0.19);
+  margin-bottom: 3%;
 }
 
 #title-details {
   display: flex;
   flex-direction: column;
-  align-items: center;
   flex: 1;
+  padding-left: 2%;
 }
 
 #link-container {
-    width: 100%;
-    text-align: center;
+  width: 100%;
+  margin-top: 2%;
 }
 
 #available-services {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
+  display: flex;
+  gap: 10px;
 }
 .service-imglink {
-    width: 300px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 3%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0.19);
+  width: 300px;
+  height: 150px;
+  margin-top: 5%;
+  object-fit: cover;
+  border-radius: 3%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0.19);
 }
 </style>

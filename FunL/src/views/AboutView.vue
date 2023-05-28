@@ -32,7 +32,6 @@ const incrementCounter = async () => {
 <style>
 @media (min-width: 1024px) {
   .about {
-    background-color: grey;
     display: flex;
     flex-direction: column;
     align-items: center;

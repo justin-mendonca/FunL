@@ -97,12 +97,6 @@ const getDataTest = async () => {
   }
 }
 
-const logResults = () => {
-  console.log(searchResults)
-  searchResults.value.splice(4)
-  console.log(searchResults)
-}
-
 const handleTitleClick = (title: any) => {
   selectedTitle.value = title
 }
@@ -118,8 +112,7 @@ const handleBackClick = () => {
       <TitleDetails :title="selectedTitle" @backClick="handleBackClick" />
     </div>
     <div v-if="!selectedTitle" id="title-not-selected">
-      <button @click="getDataTest">Get Data</button>
-      <button @click="logResults">LogResults</button>
+      <ThemeButton @click="getDataTest">Get Data</ThemeButton>
       <div id="title-image-container">
         <div v-for="title in searchResults" :key="title">
           <TitleImage :title="title" @titleClick="handleTitleClick" />
@@ -132,7 +125,7 @@ const handleBackClick = () => {
 <style>
 @media (min-width: 1024px) {
   .home {
-    background-color: grey;
+    background-color: var(--surface-ground);
     display: flex;
     flex-direction: column;
     align-items: center;
