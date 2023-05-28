@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import type { Title } from '@/interfaces/title'
 
 onMounted(() => {
   filterServices()
@@ -41,7 +42,7 @@ onMounted(() => {
 const availableServices = ref<any>(null)
 const props = defineProps({
   title: {
-    type: Object
+    type: Object as () => Title
   }
 })
 
@@ -49,18 +50,24 @@ const formattedCast = computed(() => {
   return props.title?.cast.join(', ')
 })
 
-// FIX TYPE SAFETY
-// Filters out services where you have to purchase/rent the title
+// Add ability for user to select their country and dynamically show only services available in that country
 const filterServices = () => {
-  availableServices.value = Object.entries(props.title?.streamingInfo.us)
-    .filter(([, value]) => value.some((obj) => obj.type === 'subscription'))
-    .map(([key, value]) => {
-      const obj = value.find((obj) => obj.type === 'subscription')
-      return { ...obj, name: key }
+  availableServices.value = Object.entries(props.title?.streamingInfo.us ?? {})
+    .filter(([, value]) => {
+      if (Array.isArray(value)) {
+        return value.some(obj => obj.type === 'subscription');
+      }
+      return false;
     })
-
-  console.log(availableServices.value)
-}
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        const obj = value.find(obj => obj.type === 'subscription');
+        return { ...obj, name: key };
+      }
+      return null;
+    })
+    .filter(Boolean);
+};
 
 // Reused function from StreamingService.vue, refactor to prevent duplicate code
 const getServiceLogo = (serviceName: String) => {

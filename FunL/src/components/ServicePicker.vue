@@ -11,7 +11,7 @@
 <script lang="ts">
 import { inject } from 'vue'
 import StreamingService from '@/components/StreamingService.vue'
-import { type Services } from '@/interfaces/services'
+import type { Services } from '@/interfaces/services'
 
 export default {
   name: 'ServicePicker',

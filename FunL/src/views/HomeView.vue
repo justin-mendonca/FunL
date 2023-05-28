@@ -3,16 +3,17 @@ import { inject, ref } from 'vue'
 import axios from 'axios'
 import TitleImage from '@/components/TitleImage.vue'
 import TitleDetails from '@/components/TitleDetails.vue'
-import { type Services } from '@/interfaces/services';
+import type { Services } from '@/interfaces/services';
+import type { Title } from '@/interfaces/title';
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
 // Local state
-const selectedTitle = ref<any>(null)
+const selectedTitle = ref<Title | null>(null)
 
 // Pull in global state
 const services = inject<Services>('services')!
-const searchResults = inject<any[]>('searchResults')!
+const searchResults = inject<Title[]>('searchResults')!
 
 const formatServices = () => {
   let s = ''
@@ -87,7 +88,7 @@ const getDataTest = async () => {
   }
 }
 
-const handleTitleClick = (title: any) => {
+const handleTitleClick = (title: Title) => {
   selectedTitle.value = title
 }
 
@@ -104,7 +105,7 @@ const handleBackClick = () => {
     <div v-if="!selectedTitle" id="title-not-selected">
       <ThemeButton @click="getDataTest">Get Data</ThemeButton>
       <div id="title-image-container">
-        <div v-for="title in searchResults" :key="title">
+        <div v-for="title in searchResults" :key="title.tmdbId">
           <TitleImage :title="title" @titleClick="handleTitleClick" />
         </div>
       </div>

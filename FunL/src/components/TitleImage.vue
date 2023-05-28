@@ -5,10 +5,11 @@
 </template>
 
 <script setup lang="ts">
+import type { Title } from '@/interfaces/title'
 
 const props = defineProps({
   title: {
-    type: Object
+    type: Object as () => Title
   }
 })
 
