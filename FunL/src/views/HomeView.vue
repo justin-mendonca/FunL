@@ -3,26 +3,16 @@ import { inject, ref } from 'vue'
 import axios from 'axios'
 import TitleImage from '@/components/TitleImage.vue'
 import TitleDetails from '@/components/TitleDetails.vue'
+import { type Services } from '@/interfaces/services';
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
-interface Services {
-  netflix: boolean
-  apple: boolean
-  hulu: boolean
-  prime: boolean
-  disney: boolean
-  hbo: boolean
-  peacock: boolean
-  showtime: boolean
-  starz: boolean
-  paramount: boolean
-}
-
-let searchResults = ref([])
-// Cannot guarantee that shape of title object will not change since it is fetched from API
+// Local state
 const selectedTitle = ref<any>(null)
+
+// Pull in global state
 const services = inject<Services | undefined>('services')!
+const searchResults = inject<any[]>('searchResults')!
 
 const formatServices = () => {
   let s = ''
@@ -90,7 +80,7 @@ const getDataTest = async () => {
   try {
     const response = await axios.request(options)
     const { data } = response
-    searchResults.value = searchResults.value.concat(data.result)
+    searchResults.push(...data.result)
     console.log(searchResults)
   } catch (error) {
     console.error(error)

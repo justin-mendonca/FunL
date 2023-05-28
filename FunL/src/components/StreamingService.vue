@@ -12,19 +12,7 @@
 
 <script lang="ts">
 import { inject } from 'vue'
-
-interface Services {
-  netflix: boolean
-  apple: boolean
-  hulu: boolean
-  prime: boolean
-  disney: boolean
-  hbo: boolean
-  peacock: boolean
-  showtime: boolean
-  starz: boolean
-  paramount: boolean
-}
+import { type Services } from '@/interfaces/services'
 
 export default {
   name: 'StreamingService',

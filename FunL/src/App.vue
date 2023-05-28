@@ -15,7 +15,12 @@ const services = reactive({
   paramount: false,
 });
 
+const searchResults = reactive([])
+// Cannot guarantee that shape of title object will not change since it is fetched from API
+
 provide('services', services);
+provide('searchResults', searchResults)
+
 </script>
 
 <template>
