@@ -11,7 +11,7 @@ const host = import.meta.env.VITE_HOST
 const selectedTitle = ref<any>(null)
 
 // Pull in global state
-const services = inject<Services | undefined>('services')!
+const services = inject<Services>('services')!
 const searchResults = inject<any[]>('searchResults')!
 
 const formatServices = () => {

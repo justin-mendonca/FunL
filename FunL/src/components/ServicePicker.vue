@@ -19,7 +19,7 @@ export default {
     StreamingService
   },
   setup() {
-    const services = inject<Services | undefined>('services')!
+    const services = inject<Services>('services')!
 
     return {
       services
