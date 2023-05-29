@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import { reactive, provide } from 'vue';
+import { RouterView } from 'vue-router'
+import { reactive, provide, ref } from 'vue'
 
 const services = reactive({
   netflix: false,
@@ -12,54 +12,49 @@ const services = reactive({
   peacock: false,
   showtime: false,
   starz: false,
-  paramount: false,
-});
+  paramount: false
+})
 
 const searchResults = reactive([])
 // Cannot guarantee that shape of title object will not change since it is fetched from API
 
-provide('services', services);
+provide('services', services)
 provide('searchResults', searchResults)
 
+const menuItems = ref([
+  { label: 'Home', icon: 'pi pi-home', to: '/' },
+  { label: 'Services', icon: 'pi pi-list', to: '/services' },
+  { label: 'About', icon: 'pi pi-info', to: '/about' }
+])
+
+const endTemplate = `<Button label="Logout" />`
 </script>
 
 <template>
-    <div class="nav">
-      <nav>
-        <RouterLink to="/" class="navtab">Home</RouterLink>
-        <RouterLink to="/services" class="navtab">Services</RouterLink>
-        <RouterLink to="/about" class="navtab">About</RouterLink>
-      </nav>
-    </div>
-  <RouterView :services="services" class="view"/>
+  <MenuBar class="nav" :model="menuItems" :end="endTemplate">
+    <template #start>
+      <img alt="logo" src="./assets/logoicon.png" height="40" />
+    </template>
+  </MenuBar>
+  <RouterView :services="services" class="view" />
 </template>
 
 <style scoped>
-
-nav {
+.nav {
   display: flex;
-  justify-content: center;
-  height: 5vh;
-}
-
-.navtab {
-  height: 100%;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
+  height: 5vh;
+  width: 100%;
+  padding: 0 10px;
 }
 
-nav a {
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
+.nav img {
+  margin-right: auto;
 }
 
 .view {
   width: 100vw;
   height: 95vh;
 }
-
 </style>

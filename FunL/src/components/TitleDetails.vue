@@ -5,7 +5,7 @@
     <div id="title-detail-container">
       <div id="title-image">
         <img id="poster" :src="props.title?.posterURLs[342]" alt="Movie/series poster" />
-        <p>{{ props.title?.tagline }}</p>
+        <em><p>{{ props.title?.tagline }}</p></em>
       </div>
       <div id="title-details">
         <p>{{ props.title?.overview }}</p>

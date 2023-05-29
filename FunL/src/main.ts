@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config';
 import Button from 'primevue/button';
+import Menubar from 'primevue/menubar';
 
 import "primevue/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primevue/resources/primevue.min.css";
@@ -16,5 +17,6 @@ app.use(router)
 app.use(PrimeVue)
 
 app.component('ThemeButton', Button)
+app.component('MenuBar', Menubar)
 
 app.mount('#app')
