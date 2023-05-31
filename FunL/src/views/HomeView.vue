@@ -3,8 +3,9 @@ import { inject, ref } from 'vue'
 import axios from 'axios'
 import TitleImage from '@/components/TitleImage.vue'
 import TitleDetails from '@/components/TitleDetails.vue'
-import type { Services } from '@/interfaces/services';
-import type { Title } from '@/interfaces/title';
+import Welcome from '@/components/Welcome.vue'
+import type { Services } from '@/interfaces/services'
+import type { Title } from '@/interfaces/title'
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
@@ -95,6 +96,7 @@ const handleTitleClick = (title: Title) => {
 const handleBackClick = () => {
   selectedTitle.value = null
 }
+
 </script>
 
 <template>
@@ -103,7 +105,10 @@ const handleBackClick = () => {
       <TitleDetails :title="selectedTitle" @backClick="handleBackClick" />
     </div>
     <div v-if="!selectedTitle" id="title-not-selected">
-      <ThemeButton @click="getDataTest">Get Data</ThemeButton>
+      <div v-if="searchResults.length === 0" id="welcome">
+        <Welcome />
+        <ThemeButton @click="getDataTest">Get Data</ThemeButton>
+      </div>
       <div id="title-image-container">
         <div v-for="title in searchResults" :key="title.tmdbId">
           <TitleImage :title="title" @titleClick="handleTitleClick" />
@@ -120,6 +125,20 @@ const handleBackClick = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  #title-not-selected {
+    width: 100%;
+    height: 100%;
+  }
+  
+  #welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
 
   #title-image-container {

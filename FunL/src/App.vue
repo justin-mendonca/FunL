@@ -16,22 +16,20 @@ const services = reactive({
 })
 
 const searchResults = reactive([])
-// Cannot guarantee that shape of title object will not change since it is fetched from API
 
 provide('services', services)
 provide('searchResults', searchResults)
 
 const menuItems = ref([
-  { label: 'Home', icon: 'pi pi-home', to: '/' },
+  { label: 'Library', icon: 'pi pi-images', to: '/' },
   { label: 'Services', icon: 'pi pi-list', to: '/services' },
   { label: 'About', icon: 'pi pi-info', to: '/about' }
 ])
 
-const endTemplate = `<Button label="Logout" />`
 </script>
 
 <template>
-  <MenuBar class="nav" :model="menuItems" :end="endTemplate">
+  <MenuBar class="nav" :model="menuItems" >
     <template #start>
       <img alt="logo" src="./assets/logoicon.png" height="40" />
     </template>
