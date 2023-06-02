@@ -1,16 +1,34 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue'
 import axios from 'axios'
-import TitleImage from '@/components/TitleImage.vue'
 import TitleDetails from '@/components/TitleDetails.vue'
 import Welcome from '@/components/Welcome.vue'
 import type { Services } from '@/interfaces/services'
 import type { Title } from '@/interfaces/title'
+import Carousel from 'primevue/carousel'
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
 // Local state
 const selectedTitle = ref<Title | null>(null)
+
+const responsiveOptions = ref([
+  {
+    breakpoint: '1199px',
+    numVisible: 3,
+    numScroll: 3
+  },
+  {
+    breakpoint: '991px',
+    numVisible: 2,
+    numScroll: 2
+  },
+  {
+    breakpoint: '767px',
+    numVisible: 1,
+    numScroll: 1
+  }
+])
 
 // Pull in global state
 const services = inject<Services>('services')!
@@ -96,7 +114,6 @@ const handleTitleClick = (title: Title) => {
 const handleBackClick = () => {
   selectedTitle.value = null
 }
-
 </script>
 
 <template>
@@ -109,10 +126,29 @@ const handleBackClick = () => {
         <Welcome />
         <ThemeButton @click="getDataTest">Get Data</ThemeButton>
       </div>
-      <div id="title-image-container">
-        <div v-for="title in searchResults" :key="title.tmdbId">
-          <TitleImage :title="title" @titleClick="handleTitleClick" />
-        </div>
+      <div id="title-image-container" v-if="searchResults">
+        <Carousel
+          :value="searchResults"
+          :numVisible="6"
+          :numScroll="6"
+          :responsiveOptions="responsiveOptions"
+        >
+          <template #item="slotProps">
+            <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+              <div class="mb-3">
+                <img
+                  :src="slotProps.data.posterURLs[185]"
+                  :alt="slotProps.data.name"
+                  @click="handleTitleClick(slotProps.data)"
+                  class="w-6 shadow-2"
+                />
+              </div>
+              <div>
+                <h4 class="mb-1">{{ slotProps.data.title }}</h4>
+              </div>
+            </div>
+          </template>
+        </Carousel>
       </div>
     </div>
   </div>
@@ -131,7 +167,7 @@ const handleBackClick = () => {
     width: 100%;
     height: 100%;
   }
-  
+
   #welcome {
     display: flex;
     flex-direction: column;
@@ -144,7 +180,6 @@ const handleBackClick = () => {
   #title-image-container {
     display: grid;
     width: 100%;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
   }
