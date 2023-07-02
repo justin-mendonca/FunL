@@ -12,5 +12,5 @@ interface ServiceInfo {
 }
 
 export interface AvailableServices {
-  [serviceName: string]: ServiceInfo
+  [serviceName: string]: ServiceInfo[]
 }

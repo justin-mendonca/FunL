@@ -6,6 +6,7 @@ import Welcome from '@/components/Welcome.vue'
 import type { Services } from '@/interfaces/services'
 import type { Title } from '@/interfaces/title'
 import Carousel from 'primevue/carousel'
+import type { StreamingInfo } from '@/interfaces/streamingInfo'
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
@@ -66,7 +67,7 @@ const formatServices = () => {
 //     try {
 //       const response = await axios.request(options)
 //       const { data } = response
-//       searchResults.value = searchResults.value.concat(data.result)
+//       searchResults.push(...data.result)
 
 //       if (data.hasMore) {
 //         await getPage(data.nextCursor)
@@ -79,6 +80,52 @@ const formatServices = () => {
 //   }
 
 //   await getPage()
+// }
+
+const flattenStreamingInfo = (streamingInfo: StreamingInfo, country: string) => {
+  const flattenedInfo = []
+
+  const servicesAvailable = streamingInfo[country]
+
+  for (const service in servicesAvailable) {
+    const waysToWatchTitleOnService = servicesAvailable[service]
+    for (const wayToWatch of waysToWatchTitleOnService) {
+      if (wayToWatch.type !== 'subscription') continue
+
+      flattenedInfo.push({
+        ...wayToWatch,
+        Country: country,
+        Platform: service
+      })
+    }
+  }
+  return flattenedInfo
+}
+
+// const getDataTest = async () => {
+//   const formattedServices = formatServices()
+
+//   const options = {
+//     method: 'GET',
+//     url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
+//     params: {
+//       country: 'us',
+//       services: formattedServices
+//     },
+//     headers: {
+//       'X-RapidAPI-Key': apiKey,
+//       'X-RapidAPI-Host': host
+//     }
+//   }
+
+//   try {
+//     const response = await axios.request(options)
+//     const { data } = response
+//     searchResults.push(...data.result)
+//     console.log(searchResults)
+//   } catch (error) {
+//     console.error(error)
+//   }
 // }
 
 const getDataTest = async () => {
@@ -100,12 +147,41 @@ const getDataTest = async () => {
   try {
     const response = await axios.request(options)
     const { data } = response
-    searchResults.push(...data.result)
+    searchResults.push(
+      ...data.result.map((result) => ({
+        ...result,
+        streamingInfo: flattenStreamingInfo(result.streamingInfo, options.params.country)
+      }))
+    )
     console.log(searchResults)
   } catch (error) {
     console.error(error)
   }
 }
+
+const saveDataTest = async () => {
+  console.log(searchResults)
+  try {
+    const response = await axios.post('http://localhost:5161/platform', searchResults)
+    console.log(response)
+  } catch (error) {
+    console.log(error.response)
+  }
+}
+
+// const getData = async () => {
+//   try {
+//     const response = await axios.get('http://localhost:5161/platform', {
+//       params: {
+//         country: 'us',
+//         service: 'apple'
+//       }
+//     })
+//     console.log(response.data)
+//   } catch (error) {
+//     console.log(error.response)
+//   }
+// }
 
 const handleTitleClick = (title: Title) => {
   selectedTitle.value = title
@@ -126,7 +202,7 @@ const handleBackClick = () => {
         <Welcome />
         <ThemeButton @click="getDataTest">Get Data</ThemeButton>
       </div>
-      <div id="title-image-container" v-if="searchResults">
+      <div v-else id="title-image-container">
         <Carousel
           :value="searchResults"
           :numVisible="6"
@@ -149,6 +225,7 @@ const handleBackClick = () => {
             </div>
           </template>
         </Carousel>
+        <ThemeButton @click="saveDataTest">Save in db</ThemeButton>
       </div>
     </div>
   </div>
