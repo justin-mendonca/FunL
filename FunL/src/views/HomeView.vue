@@ -90,7 +90,10 @@ const flattenStreamingInfo = (streamingInfo: StreamingInfo, country: string) => 
   for (const service in servicesAvailable) {
     const waysToWatchTitleOnService = servicesAvailable[service]
     for (const wayToWatch of waysToWatchTitleOnService) {
-      if (wayToWatch.type !== 'subscription') continue
+
+      // Right now this is filtering out viable titles (I.e., can be watched with just a subscription) if they are available on a service that is not in the current services interface
+      // Can potentially expand the supported services later on and remove the second part of this conditional check
+      if (wayToWatch.type !== 'subscription' || !Object.keys(services).includes(service)) continue
 
       flattenedInfo.push({
         ...wayToWatch,
@@ -147,12 +150,19 @@ const getDataTest = async () => {
   try {
     const response = await axios.request(options)
     const { data } = response
-    searchResults.push(
-      ...data.result.map((result) => ({
+    
+    data.result.forEach((result: any) => {
+      const flattenedInfo = flattenStreamingInfo(result.streamingInfo, options.params.country);
+
+      // If the flattenedInfo array is empty, skip this result
+      if (flattenedInfo.length === 0) return;
+
+      searchResults.push({
         ...result,
-        streamingInfo: flattenStreamingInfo(result.streamingInfo, options.params.country)
-      }))
-    )
+        streamingInfo: flattenedInfo
+      });
+    });
+
     console.log(searchResults)
   } catch (error) {
     console.error(error)
@@ -169,19 +179,20 @@ const saveDataTest = async () => {
   }
 }
 
-// const getData = async () => {
-//   try {
-//     const response = await axios.get('http://localhost:5161/platform', {
-//       params: {
-//         country: 'us',
-//         service: 'apple'
-//       }
-//     })
-//     console.log(response.data)
-//   } catch (error) {
-//     console.log(error.response)
-//   }
-// }
+const getData = async () => {
+  const arr = []
+  for (const serviceName in services) {
+    if (services[serviceName as keyof Services]) {
+      arr.push(serviceName)
+    }
+  }
+  try {
+    const response = await axios.post('http://localhost:5161/platform/GetTitles', arr)
+    console.log(response.data)
+  } catch (error) {
+    console.log(error.response)
+  }
+}
 
 const handleTitleClick = (title: Title) => {
   selectedTitle.value = title
