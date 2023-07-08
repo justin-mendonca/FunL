@@ -16,8 +16,8 @@ const selectedTitle = ref<Title | null>(null)
 const responsiveOptions = ref([
   {
     breakpoint: '1199px',
-    numVisible: 3,
-    numScroll: 3
+    numVisible: 4,
+    numScroll: 4
   },
   {
     breakpoint: '991px',
@@ -46,41 +46,51 @@ const formatServices = () => {
   return s.slice(0, -1)
 }
 
-// const getData = async () => {
-//   const formattedServices = formatServices()
+const fetchFromApi = async () => {
+  const formattedServices = formatServices()
 
-//   const getPage = async (nextCursor = null) => {
-//     const options = {
-//       method: 'GET',
-//       url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
-//       params: {
-//         country: 'us',
-//         services: formattedServices,
-//         cursor: nextCursor
-//       },
-//       headers: {
-//         'X-RapidAPI-Key': apiKey,
-//         'X-RapidAPI-Host': host
-//       }
-//     }
+  const getPage = async (nextCursor = null) => {
+    const options = {
+      method: 'GET',
+      url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
+      params: {
+        country: 'us',
+        services: formattedServices,
+        cursor: nextCursor
+      },
+      headers: {
+        'X-RapidAPI-Key': apiKey,
+        'X-RapidAPI-Host': host
+      }
+    }
 
-//     try {
-//       const response = await axios.request(options)
-//       const { data } = response
-//       searchResults.push(...data.result)
+    try {
+      const response = await axios.request(options)
+      const { data } = response
+      data.result.forEach((result: any) => {
+        const flattenedInfo = flattenStreamingInfo(result.streamingInfo, options.params.country)
 
-//       if (data.hasMore) {
-//         await getPage(data.nextCursor)
-//       } else {
-//         console.log(searchResults)
-//       }
-//     } catch (error) {
-//       console.error(error)
-//     }
-//   }
+        // If the flattenedInfo array is empty, skip this result
+        if (flattenedInfo.length === 0) return
 
-//   await getPage()
-// }
+        searchResults.push({
+          ...result,
+          streamingInfo: flattenedInfo
+        })
+      })
+
+      if (data.hasMore) {
+        await getPage(data.nextCursor)
+      } else {
+        console.log(searchResults)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  await getPage()
+}
 
 const flattenStreamingInfo = (streamingInfo: StreamingInfo, country: string) => {
   const flattenedInfo = []
@@ -90,7 +100,6 @@ const flattenStreamingInfo = (streamingInfo: StreamingInfo, country: string) => 
   for (const service in servicesAvailable) {
     const waysToWatchTitleOnService = servicesAvailable[service]
     for (const wayToWatch of waysToWatchTitleOnService) {
-
       // Right now this is filtering out viable titles (I.e., can be watched with just a subscription) if they are available on a service that is not in the current services interface
       // Can potentially expand the supported services later on and remove the second part of this conditional check
       if (wayToWatch.type !== 'subscription' || !Object.keys(services).includes(service)) continue
@@ -104,32 +113,6 @@ const flattenStreamingInfo = (streamingInfo: StreamingInfo, country: string) => 
   }
   return flattenedInfo
 }
-
-// const getDataTest = async () => {
-//   const formattedServices = formatServices()
-
-//   const options = {
-//     method: 'GET',
-//     url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
-//     params: {
-//       country: 'us',
-//       services: formattedServices
-//     },
-//     headers: {
-//       'X-RapidAPI-Key': apiKey,
-//       'X-RapidAPI-Host': host
-//     }
-//   }
-
-//   try {
-//     const response = await axios.request(options)
-//     const { data } = response
-//     searchResults.push(...data.result)
-//     console.log(searchResults)
-//   } catch (error) {
-//     console.error(error)
-//   }
-// }
 
 const getDataTest = async () => {
   const formattedServices = formatServices()
@@ -150,18 +133,18 @@ const getDataTest = async () => {
   try {
     const response = await axios.request(options)
     const { data } = response
-    
+
     data.result.forEach((result: any) => {
-      const flattenedInfo = flattenStreamingInfo(result.streamingInfo, options.params.country);
+      const flattenedInfo = flattenStreamingInfo(result.streamingInfo, options.params.country)
 
       // If the flattenedInfo array is empty, skip this result
-      if (flattenedInfo.length === 0) return;
+      if (flattenedInfo.length === 0) return
 
       searchResults.push({
         ...result,
         streamingInfo: flattenedInfo
-      });
-    });
+      })
+    })
 
     console.log(searchResults)
   } catch (error) {
@@ -170,7 +153,6 @@ const getDataTest = async () => {
 }
 
 const saveDataTest = async () => {
-  console.log(searchResults)
   try {
     const response = await axios.post('http://localhost:5161/platform', searchResults)
     console.log(response)
@@ -188,7 +170,8 @@ const getData = async () => {
   }
   try {
     const response = await axios.post('http://localhost:5161/platform/GetTitles', arr)
-    console.log(response.data)
+    searchResults.push(...response.data.data.$values.slice(-24))
+    console.log(searchResults)
   } catch (error) {
     console.log(error.response)
   }
@@ -211,13 +194,13 @@ const handleBackClick = () => {
     <div v-if="!selectedTitle" id="title-not-selected">
       <div v-if="searchResults.length === 0" id="welcome">
         <Welcome />
-        <ThemeButton @click="getDataTest">Get Data</ThemeButton>
+        <ThemeButton @click="getData">Get Data</ThemeButton>
       </div>
       <div v-else id="title-image-container">
         <Carousel
           :value="searchResults"
-          :numVisible="6"
-          :numScroll="6"
+          :numVisible="8"
+          :numScroll="8"
           :responsiveOptions="responsiveOptions"
         >
           <template #item="slotProps">
@@ -230,9 +213,7 @@ const handleBackClick = () => {
                   class="w-6 shadow-2"
                 />
               </div>
-              <div>
-                <h4 class="mb-1">{{ slotProps.data.title }}</h4>
-              </div>
+              <h4 class="mb-1">{{ slotProps.data.name }}</h4>
             </div>
           </template>
         </Carousel>
@@ -270,6 +251,17 @@ const handleBackClick = () => {
     width: 100%;
     justify-content: center;
     align-items: center;
+  }
+
+  .p-carousel {
+    max-width: 95vw;
+  }
+
+  .mb-3 img {
+    width: 100%;
+  }
+  .mb-1 {
+    text-align: center;
   }
 }
 </style>

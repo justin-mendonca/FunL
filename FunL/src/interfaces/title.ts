@@ -32,11 +32,12 @@ export interface Title {
     runtime: number
     streamingInfo: StreamingInfo
     tagline: string 
-    title: string 
+    title?: string 
     tmdbId: number 
     tmdbRating: number
     type: string
     year: number
     youtubeTrailerVideoId: string 
-    youtubeTrailerVideoLink: string 
+    youtubeTrailerVideoLink: string
+    name?: string 
 }
