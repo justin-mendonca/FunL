@@ -13,6 +13,63 @@ const host = import.meta.env.VITE_HOST
 
 // Local state
 const selectedTitle = ref<FetchedTitle | null>(null)
+const comedyResults = ref<FetchedTitle[]>([])
+const dramaResults = ref<FetchedTitle[]>([])
+const thrillerResults = ref<FetchedTitle[]>([])
+const documentaryResults = ref<FetchedTitle[]>([])
+const crimeResults = ref<FetchedTitle[]>([])
+const horrorResults = ref<FetchedTitle[]>([])
+const biographyResults = ref<FetchedTitle[]>([])
+const actionResults = ref<FetchedTitle[]>([])
+const adventureResults = ref<FetchedTitle[]>([])
+const warResults = ref<FetchedTitle[]>([])
+const romanceResults = ref<FetchedTitle[]>([])
+const musicResults = ref<FetchedTitle[]>([])
+const familyResults = ref<FetchedTitle[]>([])
+const fantasyResults = ref<FetchedTitle[]>([])
+const historyResults = ref<FetchedTitle[]>([])
+const scienceFictionResults = ref<FetchedTitle[]>([])
+const sportResults = ref<FetchedTitle[]>([])
+const mysteryResults = ref<FetchedTitle[]>([])
+const westernResults = ref<FetchedTitle[]>([])
+const animationResults = ref<FetchedTitle[]>([])
+const musicalResults = ref<FetchedTitle[]>([])
+const shortResults = ref<FetchedTitle[]>([])
+const realityResults = ref<FetchedTitle[]>([])
+const gameShowResults = ref<FetchedTitle[]>([])
+const talkShowResults = ref<FetchedTitle[]>([])
+const newsResults = ref<FetchedTitle[]>([])
+const noirResults = ref<FetchedTitle[]>([])
+
+const genreMap = new Map([
+  ['Comedy', comedyResults],
+  ['Drama', dramaResults],
+  ['Thriller', thrillerResults],
+  ['Documentary', documentaryResults],
+  ['Crime', crimeResults],
+  ['Horror', horrorResults],
+  ['Biography', biographyResults],
+  ['Action', actionResults],
+  ['War', warResults],
+  ['Adventure', adventureResults],
+  ['Romance', romanceResults],
+  ['Music', musicResults],
+  ['Family', familyResults],
+  ['Fantasy', fantasyResults],
+  ['History', historyResults],
+  ['Science Fiction', scienceFictionResults],
+  ['Sport', sportResults],
+  ['Mystery', mysteryResults],
+  ['Western', westernResults],
+  ['Animation', animationResults],
+  ['Musical', musicalResults],
+  ['Short', shortResults],
+  ['Reality', realityResults],
+  ['Game Show', gameShowResults],
+  ['Talk Show', talkShowResults],
+  ['News', newsResults],
+  ['Film Noir', noirResults]
+])
 
 const responsiveOptions = ref([
   {
@@ -157,7 +214,7 @@ const saveDataTest = async () => {
   try {
     const response = await axios.post('http://localhost:5161/platform', searchResults)
     console.log(response)
-  } catch (error) {
+  } catch (error: any) {
     console.log(error.response)
   }
 }
@@ -171,9 +228,17 @@ const getData = async () => {
   }
   try {
     const response = await axios.post('http://localhost:5161/platform/GetTitles', arr)
-    searchResults.push(...response.data.data.$values.slice(-24))
-  } catch (error) {
-    console.log(error.response)
+    const fetchedTitles = response.data.data.$values
+    fetchedTitles.forEach((title: FetchedTitle) => {
+      if (title.genres.$values.length > 0) {
+        const genre = title.genres.$values[title.genres.$values.length - 1]
+        const resultsArray = genreMap.get(genre)!
+        resultsArray.value?.push(title)
+      }
+    })
+    searchResults.push(...fetchedTitles)
+  } catch (error: any) {
+    console.log(error)
   }
 }
 
@@ -198,26 +263,102 @@ const handleBackClick = () => {
         <ThemeButton @click="getData">Get Data</ThemeButton>
       </div>
       <div v-else id="title-image-container">
-        <Carousel
-          :value="searchResults"
-          :numVisible="8"
-          :numScroll="8"
-          :responsiveOptions="responsiveOptions"
-        >
-          <template #item="slotProps">
-            <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-              <div class="mb-3">
-                <img
-                  :src="slotProps.data.posterURLs[185]"
-                  :alt="slotProps.data.name"
-                  @click="handleTitleClick(slotProps.data)"
-                  class="w-6 shadow-2"
-                />
+        <div v-if="comedyResults">
+          <h2>Comedies</h2>
+          <Carousel
+            :value="comedyResults"
+            :numVisible="8"
+            :numScroll="8"
+            :responsiveOptions="responsiveOptions"
+            :showIndicators="false"
+          >
+            <template #item="slotProps">
+              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="mb-3">
+                  <img
+                    :src="slotProps.data.posterURLs[185]"
+                    :alt="slotProps.data.name"
+                    @click="handleTitleClick(slotProps.data)"
+                    class="w-6 shadow-2"
+                  />
+                </div>
+                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
               </div>
-              <h4 class="mb-1">{{ slotProps.data.name }}</h4>
-            </div>
-          </template>
-        </Carousel>
+            </template>
+          </Carousel>
+        </div>
+        <div v-if="comedyResults">
+          <h2>Thrillers</h2>
+          <Carousel
+            :value="thrillerResults"
+            :numVisible="8"
+            :numScroll="8"
+            :responsiveOptions="responsiveOptions"
+            :showIndicators="false"
+          >
+            <template #item="slotProps">
+              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="mb-3">
+                  <img
+                    :src="slotProps.data.posterURLs[185]"
+                    :alt="slotProps.data.name"
+                    @click="handleTitleClick(slotProps.data)"
+                    class="w-6 shadow-2"
+                  />
+                </div>
+                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
+              </div>
+            </template>
+          </Carousel>
+        </div>
+        <div v-if="comedyResults">
+          <h2>Action</h2>
+          <Carousel
+            :value="actionResults"
+            :numVisible="8"
+            :numScroll="8"
+            :responsiveOptions="responsiveOptions"
+            :showIndicators="false"
+          >
+            <template #item="slotProps">
+              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="mb-3">
+                  <img
+                    :src="slotProps.data.posterURLs[185]"
+                    :alt="slotProps.data.name"
+                    @click="handleTitleClick(slotProps.data)"
+                    class="w-6 shadow-2"
+                  />
+                </div>
+                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
+              </div>
+            </template>
+          </Carousel>
+        </div>
+        <div v-if="comedyResults">
+          <h2>Drama</h2>
+          <Carousel
+            :value="dramaResults"
+            :numVisible="8"
+            :numScroll="8"
+            :responsiveOptions="responsiveOptions"
+            :showIndicators="false"
+          >
+            <template #item="slotProps">
+              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="mb-3">
+                  <img
+                    :src="slotProps.data.posterURLs[185]"
+                    :alt="slotProps.data.name"
+                    @click="handleTitleClick(slotProps.data)"
+                    class="w-6 shadow-2"
+                  />
+                </div>
+                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
+              </div>
+            </template>
+          </Carousel>
+        </div>
         <ThemeButton @click="saveDataTest">Save in db</ThemeButton>
       </div>
     </div>
@@ -256,6 +397,11 @@ const handleBackClick = () => {
 
   .p-carousel {
     max-width: 95vw;
+  }
+
+  .p-carousel-item {
+    width: 100%;
+    height: 100%;
   }
 
   .mb-3 img {
