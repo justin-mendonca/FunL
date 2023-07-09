@@ -7,11 +7,12 @@ import type { Services } from '@/interfaces/services'
 import type { Title } from '@/interfaces/title'
 import Carousel from 'primevue/carousel'
 import type { StreamingInfo } from '@/interfaces/streamingInfo'
+import type { FetchedTitle } from '@/interfaces/fetchedTitle'
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
 // Local state
-const selectedTitle = ref<Title | null>(null)
+const selectedTitle = ref<FetchedTitle | null>(null)
 
 const responsiveOptions = ref([
   {
@@ -33,7 +34,7 @@ const responsiveOptions = ref([
 
 // Pull in global state
 const services = inject<Services>('services')!
-const searchResults = inject<Title[]>('searchResults')!
+const searchResults = inject<FetchedTitle[]>('searchResults')!
 
 const formatServices = () => {
   let s = ''
@@ -171,13 +172,13 @@ const getData = async () => {
   try {
     const response = await axios.post('http://localhost:5161/platform/GetTitles', arr)
     searchResults.push(...response.data.data.$values.slice(-24))
-    console.log(searchResults)
   } catch (error) {
     console.log(error.response)
   }
 }
 
-const handleTitleClick = (title: Title) => {
+const handleTitleClick = (title: FetchedTitle) => {
+  console.log(title)
   selectedTitle.value = title
 }
 

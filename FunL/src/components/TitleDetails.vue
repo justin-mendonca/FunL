@@ -1,25 +1,26 @@
 <template>
   <div class="selected-title">
     <ThemeButton label="Back" icon="pi pi-arrow-left" size="small" @click="$emit('backClick')" />
-    <p id="title-text">{{ props.title?.title }}</p>
+    <p id="title-text">{{ props.title?.name }}</p>
     <div id="title-detail-container">
       <div id="title-image">
         <img id="poster" :src="props.title?.posterURLs[342]" alt="Movie/series poster" />
         <em><p>{{ props.title?.tagline }}</p></em>
       </div>
       <div id="title-details">
-        <p>{{ props.title?.overview }}</p>
+        <p>{{ props.title!.overview }}</p>
         <br>
         <p>Cast: {{ formattedCast }}</p>
-        <p>IMDb rating: {{ props.title?.imdbRating }}</p>
+        <br>
+        <p>IMDb rating: {{ props.title!.imdbRating }}</p>
         <div id="link-container">
           <p>Watch on:</p>
           <div id="available-services">
-            <div v-for="service in availableServices" :key="service">
+            <div v-for="service in props.title!.streamingServices.$values" :key="service.$id">
               <a :href="service.link" target="_blank" rel="noreferrer noopener">
                 <img
-                  :src="getServiceLogo(service.name)"
-                  :alt="`${service.name} logo`"
+                  :src="getServiceLogo(service.platform)"
+                  :alt="`${service.platform} logo`"
                   class="service-imglink"
                 />
               </a>
@@ -32,26 +33,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import type { Title } from '@/interfaces/title'
+import { computed } from 'vue'
+import type { FetchedTitle } from '@/interfaces/fetchedTitle';
 
-onMounted(() => {
-  filterServices()
-})
-
-const availableServices = ref<any>(null)
 const props = defineProps({
   title: {
-    type: Object as () => Title
+    type: Object as () => FetchedTitle
   }
 })
 
 const formattedCast = computed(() => {
-  return props.title?.cast.join(', ')
+  return props.title?.cast.$values.join(', ')
 })
 
-// Add ability for user to select their country and dynamically show only services available in that country
-const filterServices = () => {
+// Only useful when fetching data directly from external API - when fetching from backend titles are already filtered to only include platforms by subscription only
+
+/* const filterServices = () => {
   availableServices.value = Object.entries(props.title?.streamingInfo.us ?? {})
     .filter(([, value]) => {
       if (Array.isArray(value)) {
@@ -67,7 +64,7 @@ const filterServices = () => {
       return null;
     })
     .filter(Boolean);
-};
+}; */
 
 // Reused function from StreamingService.vue, refactor to prevent duplicate code
 const getServiceLogo = (serviceName: String) => {
