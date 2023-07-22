@@ -45,7 +45,7 @@ const loginSchema = yup.object({
   password: yup
     .string()
     .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
+    .required('Password is required')
 })
 
 const registerSchema = yup.object({
@@ -81,8 +81,15 @@ const { value: confirmPassword, errorMessage: confirmPasswordErrorMessage } = us
 ) as { value: Ref<string | null>; errorMessage: Ref<string | undefined> }
 //
 
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
+const onSubmit = handleSubmit(async (values) => {
+  const endpoint = showLoginForm.value ? 'login' : 'register'
+  const url = `http://localhost:5161/platform/${endpoint}`
+  try {
+    const response = await axios.post(url, values)
+    console.log(response)
+  } catch (error: any) {
+    console.log(error)
+  }
   hideOverlay()
 })
 
