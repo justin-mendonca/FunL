@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import axios from 'axios'
 import { RouterView } from 'vue-router'
-import { reactive, provide, ref, nextTick } from 'vue'
+import { computed, reactive, provide, ref, nextTick, type Ref } from 'vue'
 import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
 import Button from 'primevue/button'
 import OverlayPanel from 'primevue/overlaypanel'
+import { useForm, useField } from 'vee-validate'
+import * as yup from 'yup'
 
 const services = reactive({
   netflix: false,
@@ -27,11 +29,6 @@ const menuItems = ref([
   { label: 'About', icon: 'pi pi-info', to: '/about' }
 ])
 
-const user = ref({
-  email: '',
-  password: ''
-})
-
 // Used to toggle the forms
 const loginForm = ref()
 const registerForm = ref()
@@ -42,22 +39,66 @@ const btnRegister = ref<any>(null)
 
 const showLoginForm = ref(true)
 
-const handleSubmit = async () => {
-  // Form validation and form submission logic
-  console.log(user.value)
-  hideOverlay() // You can also decide to close the form here based on the form submission response
+// form validation
+const loginSchema = yup.object({
+  email: yup.string().email('Invalid email format').required('Email is required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+})
+
+const registerSchema = yup.object({
+  email: yup.string().email('Invalid email format').required('Email is required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Passwords must match')
+    .required('Confirm password is required')
+})
+
+const activeSchema = computed(() => {
+  return showLoginForm.value ? loginSchema : registerSchema
+})
+
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: activeSchema
+})
+
+const { value: email, errorMessage: emailErrorMessage } = useField('email') as {
+  value: Ref<string | null>
+  errorMessage: Ref<string | undefined>
 }
+const { value: password, errorMessage: passwordErrorMessage } = useField('password') as {
+  value: Ref<string | null>
+  errorMessage: Ref<string | undefined>
+}
+const { value: confirmPassword, errorMessage: confirmPasswordErrorMessage } = useField(
+  'confirmPassword'
+) as { value: Ref<string | null>; errorMessage: Ref<string | undefined> }
+//
+
+const onSubmit = handleSubmit((values) => {
+  console.log(values)
+  hideOverlay()
+})
 
 const toggleOverlay = (event: Event) => {
-  if (loginForm.value) loginForm.value.toggle(event)
-  else registerForm.value.toggle(event)
+  if (loginForm.value) {
+    loginForm.value.toggle(event)
+    resetForm()
+  } else {
+    registerForm.value.toggle(event)
+    resetForm()
+  }
 }
 
 const hideOverlay = () => {
   loginForm.value && loginForm.value.hide()
   registerForm.value && registerForm.value.hide()
-  user.value.email = ''
-  user.value.password = ''
 }
 
 const handleToggleForm = () => {
@@ -92,14 +133,32 @@ provide('menuItems', menuItems)
           icon="pi pi-user-plus"
         />
         <OverlayPanel ref="loginForm">
-          <form @submit.prevent="handleSubmit" class="login-form">
-            <h3>Log In</h3>
-            <InputText v-model="user.email" class="input-field" placeholder="Email" />
-            <Password v-model="user.password" class="input-field" placeholder="Password" />
-            <Button type="submit" label="Log In" class="login-button" />
+          <form @submit.prevent="onSubmit" class="auth-form">
+            <span class="p-float-label">
+              <InputText
+                v-model="email"
+                type="text"
+                :class="{ 'p-invalid': emailErrorMessage }"
+                aria-describedby="email-error"
+              />
+              <label for="email">Email</label>
+            </span>
+            <small v-if="emailErrorMessage" class="p-error">{{ emailErrorMessage }}</small>
+            <span class="p-float-label">
+              <InputText
+                id="login-password-field"
+                v-model="password"
+                type="password"
+                :class="{ 'p-invalid': passwordErrorMessage }"
+                aria-describedby="password-error"
+              />
+              <label for="password">Password</label>
+            </span>
+            <small v-if="passwordErrorMessage" class="p-error">{{ passwordErrorMessage }}</small>
+            <Button type="submit" label="Log In" class="submit-button" />
             <div class="swap-form">
-              <p>Don't have an account yet?</p>
-              <a class="swap-link" @click.stop="handleToggleForm">Register now</a>
+              <p>Don't have an account?</p>
+              <a class="swap-link" @click.stop="handleToggleForm">Register Now</a>
             </div>
           </form>
         </OverlayPanel>
@@ -113,14 +172,45 @@ provide('menuItems', menuItems)
           icon="pi pi-user-plus"
         />
         <OverlayPanel ref="registerForm">
-          <form @submit.prevent="handleSubmit" class="login-form">
-            <h3>Log In</h3>
-            <InputText v-model="user.email" class="input-field" placeholder="Email" />
-            <Password v-model="user.password" class="input-field" placeholder="Password" />
-            <Button type="submit" label="Log In" class="login-button" />
+          <form @submit.prevent="onSubmit" class="auth-form">
+            <span class="p-float-label">
+              <InputText
+                v-model="email"
+                type="text"
+                :class="{ 'p-invalid': emailErrorMessage }"
+                aria-describedby="email-error"
+              />
+              <label for="email">Email</label>
+            </span>
+            <small v-if="emailErrorMessage" class="p-error">{{ emailErrorMessage }}</small>
+            <span class="p-float-label">
+              <InputText
+                id="login-password-field"
+                v-model="password"
+                type="password"
+                :class="{ 'p-invalid': passwordErrorMessage }"
+                aria-describedby="password-error"
+              />
+              <label for="password">Password</label>
+            </span>
+            <small v-if="passwordErrorMessage" class="p-error">{{ passwordErrorMessage }}</small>
+            <span class="p-float-label">
+              <InputText
+                id="register-confirm-password-field"
+                v-model="confirmPassword"
+                type="password"
+                :class="{ 'p-invalid': confirmPasswordErrorMessage }"
+                aria-describedby="confirm-password-error"
+              />
+              <label for="confirmPassword">Confirm Password</label>
+            </span>
+            <small v-if="confirmPasswordErrorMessage" class="p-error">
+              {{ confirmPasswordErrorMessage }}
+            </small>
+            <Button type="submit" label="Register" class="submit-button" />
             <div class="swap-form">
               <p>Already have an account?</p>
-              <a class="swap-link" @click.stop="handleToggleForm">Log in</a>
+              <a class="swap-link" @click.stop="handleToggleForm">Log In</a>
             </div>
           </form>
         </OverlayPanel>
@@ -145,27 +235,30 @@ provide('menuItems', menuItems)
   width: 100vw;
   height: 95vh;
 }
-.login-form {
+.auth-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.5rem;
+  gap: 20px;
 }
 
-.input-field {
-  width: 200px;
-  margin-bottom: 1rem;
+.p-error {
+  margin-top: -20px;
+  text-align: center;
 }
 
-.login-button {
-  width: 200px;
+.submit-button {
+  width: 65%;
+  margin-top: -10px;
 }
 
 .swap-form {
   display: flex;
   font-size: 0.9em;
   gap: 3px;
+  margin-top: -10px;
 }
 
 .swap-link {
