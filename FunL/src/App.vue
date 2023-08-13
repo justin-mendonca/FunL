@@ -136,18 +136,20 @@ const handleToggleForm = () => {
 const logout = () => {
   localStorage.removeItem('jwtToken')
   isLoggedIn.value = false
+  searchResults.length = 0;
 }
 
 // provide global state
 provide('services', services)
 provide('searchResults', searchResults)
 provide('menuItems', menuItems)
+provide('isLoggedIn', isLoggedIn)
 </script>
 
 <template>
   <MenuBar class="nav" :model="menuItems">
     <template #start>
-      <img alt="logo" src="./assets/logoicon.png" height="40" />
+      <img alt="logo" src="./assets/funl_logo_icon_black.png" height="40" id="logo-icon" />
     </template>
     <template #end>
       <div v-if="isLoggedIn">
@@ -294,5 +296,13 @@ provide('menuItems', menuItems)
 
 .swap-link {
   font-weight: 600;
+}
+
+:deep(.p-menubar-start) {
+  display: flex;
+}
+
+#logo-icon {
+  margin-top: 1px;
 }
 </style>
