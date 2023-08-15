@@ -6,7 +6,12 @@
       class="serviceImage"
       @click="toggleService"
     />
-    <img v-if="services[serviceName as keyof Services]" id="checkmark" src="../assets/Checkmark.png" alt="Green checkmark">
+    <img
+      v-if="services[serviceName as keyof Services]"
+      id="checkmark"
+      src="../assets/Checkmark.png"
+      alt="Green checkmark"
+    />
   </div>
 </template>
 
@@ -24,7 +29,7 @@ export default {
       return new URL(`../assets/logos/${serviceName}_logo.webp`, import.meta.url).href
     }
 
-    const services = inject<Services | undefined>('services')!
+    const services = inject<Services>('services')!
 
     const toggleService = () => {
       services[props.serviceName as keyof Services] = !services[props.serviceName as keyof Services]
