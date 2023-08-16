@@ -7,8 +7,10 @@ import Button from 'primevue/button'
 import OverlayPanel from 'primevue/overlaypanel'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
+import type { Services } from '@/interfaces/services'
+import type { SubscribedService } from '@/interfaces/subscribedService'
 
-const services = reactive({
+const services: Services = reactive({
   netflix: false,
   apple: false,
   hulu: false,
@@ -23,8 +25,31 @@ const services = reactive({
 
 const isLoggedIn = ref(!!localStorage.getItem('jwtToken'))
 
-watchEffect(() => {
+watchEffect(async () => {
   isLoggedIn.value = !!localStorage.getItem('jwtToken')
+
+  const jwtToken = localStorage.getItem('jwtToken')
+
+  const axiosConfig = {
+    headers: {
+      'Authorization': `Bearer ${jwtToken}`,
+      'Content-Type': 'application/json'
+    }
+  }
+
+  if (isLoggedIn.value === true) {
+    const response = await axios.get('http://localhost:5161/subscriptions', axiosConfig)
+
+    if (response.status === 200) {
+      const subscribedServicesArr = response.data.data.$values;
+
+      subscribedServicesArr.forEach((subscribedService: SubscribedService) => {
+        const platformKey = subscribedService.streamingPlatformName as keyof Services;
+
+        services[platformKey] = true;
+      })
+    }
+  }
 })
 
 const searchResults = reactive([])
