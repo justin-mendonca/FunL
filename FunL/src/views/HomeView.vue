@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, ref, watch, onBefore, onMounted } from 'vue'
 import axios from 'axios'
 import TitleDetails from '@/components/TitleDetails.vue'
 import Welcome from '@/components/Welcome.vue'
 import type { Services } from '@/interfaces/services'
-import type { Title } from '@/interfaces/title'
 import Carousel from 'primevue/carousel'
+import ProgressSpinner from 'primevue/progressspinner'
 import type { StreamingInfo } from '@/interfaces/streamingInfo'
 import type { FetchedTitle } from '@/interfaces/fetchedTitle'
+import type { SubscribedService } from '@/interfaces/subscribedService'
 const apiKey = import.meta.env.VITE_API_KEY
 const host = import.meta.env.VITE_HOST
 
@@ -89,9 +90,61 @@ const responsiveOptions = ref([
   }
 ])
 
+const isLoading = ref(true)
+
 // Pull in global state
 const services = inject<Services>('services')!
 const searchResults = inject<FetchedTitle[]>('searchResults')!
+
+const getData = async (subscriptionResponse: any) => {
+  const arr: string[] = []
+
+  const userSubscriptions = subscriptionResponse.data.data.$values
+
+  userSubscriptions.forEach((subscription: SubscribedService) => {
+    arr.push(subscription.streamingPlatformName)
+  })
+
+  try {
+    const response = await axios.post('http://localhost:5161/platform/GetTitles', arr)
+    const fetchedTitles = response.data.data.$values
+    fetchedTitles.forEach((title: FetchedTitle) => {
+      if (title.genres.$values.length > 0) {
+        const genre = title.genres.$values[title.genres.$values.length - 1]
+        const resultsArray = genreMap.get(genre)!
+        resultsArray.value?.push(title)
+      }
+    })
+    searchResults.push(...fetchedTitles)
+    isLoading.value = false
+  } catch (error: any) {
+    console.log(error)
+  }
+}
+
+onMounted(async () => {
+  const isLoggedIn = !!localStorage.getItem('jwtToken')
+
+  if (isLoggedIn) {
+    const jwtToken = localStorage.getItem('jwtToken')
+
+    const axiosConfig = {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json'
+      }
+    }
+
+    const response = await axios.get('http://localhost:5161/subscriptions', axiosConfig)
+    console.log(response)
+    if (response.status === 200) {
+      await getData(response)
+    }
+  }
+  else {
+    isLoading.value = false;
+  }
+})
 
 const formatServices = () => {
   let s = ''
@@ -219,31 +272,7 @@ const saveDataTest = async () => {
   }
 }
 
-const getData = async () => {
-  const arr = []
-  for (const serviceName in services) {
-    if (services[serviceName as keyof Services]) {
-      arr.push(serviceName)
-    }
-  }
-  try {
-    const response = await axios.post('http://localhost:5161/platform/GetTitles', arr)
-    const fetchedTitles = response.data.data.$values
-    fetchedTitles.forEach((title: FetchedTitle) => {
-      if (title.genres.$values.length > 0) {
-        const genre = title.genres.$values[title.genres.$values.length - 1]
-        const resultsArray = genreMap.get(genre)!
-        resultsArray.value?.push(title)
-      }
-    })
-    searchResults.push(...fetchedTitles)
-  } catch (error: any) {
-    console.log(error)
-  }
-}
-
 const handleTitleClick = (title: FetchedTitle) => {
-  console.log(title)
   selectedTitle.value = title
 }
 
@@ -253,113 +282,116 @@ const handleBackClick = () => {
 </script>
 
 <template>
-  <div class="home">
-    <div v-if="selectedTitle">
-      <TitleDetails :title="selectedTitle" @backClick="handleBackClick" />
-    </div>
-    <div v-if="!selectedTitle" id="title-not-selected">
-      <div v-if="searchResults.length === 0" id="welcome">
-        <Welcome />
-        <ThemeButton @click="getData">Get Data</ThemeButton>
+  <div class="library">
+    <ProgressSpinner v-if="isLoading" aria-label="Loading" />
+    <div v-else class="library-container">
+      <div v-if="selectedTitle">
+        <TitleDetails :title="selectedTitle" @backClick="handleBackClick" />
       </div>
-      <div v-else id="title-image-container">
-        <div v-if="comedyResults">
-          <h2>Comedies</h2>
-          <Carousel
-            :value="comedyResults"
-            :numVisible="8"
-            :numScroll="8"
-            :responsiveOptions="responsiveOptions"
-            :showIndicators="false"
-          >
-            <template #item="slotProps">
-              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-                <div class="mb-3">
-                  <img
-                    :src="slotProps.data.posterURLs[185]"
-                    :alt="slotProps.data.name"
-                    @click="handleTitleClick(slotProps.data)"
-                    class="w-6 shadow-2"
-                  />
-                </div>
-                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
-              </div>
-            </template>
-          </Carousel>
+      <div v-else id="title-not-selected">
+        <div v-if="searchResults.length === 0" id="welcome">
+          <Welcome />
+          <ThemeButton @click="getData">Get Data</ThemeButton>
         </div>
-        <div v-if="comedyResults">
-          <h2>Thrillers</h2>
-          <Carousel
-            :value="thrillerResults"
-            :numVisible="8"
-            :numScroll="8"
-            :responsiveOptions="responsiveOptions"
-            :showIndicators="false"
-          >
-            <template #item="slotProps">
-              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-                <div class="mb-3">
-                  <img
-                    :src="slotProps.data.posterURLs[185]"
-                    :alt="slotProps.data.name"
-                    @click="handleTitleClick(slotProps.data)"
-                    class="w-6 shadow-2"
-                  />
+        <div v-else id="title-image-container">
+          <div v-if="comedyResults">
+            <h2>Comedies</h2>
+            <Carousel
+              :value="comedyResults"
+              :numVisible="8"
+              :numScroll="8"
+              :responsiveOptions="responsiveOptions"
+              :showIndicators="false"
+            >
+              <template #item="slotProps">
+                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                  <div class="mb-3">
+                    <img
+                      :src="slotProps.data.posterURLs[185]"
+                      :alt="slotProps.data.name"
+                      @click="handleTitleClick(slotProps.data)"
+                      class="w-6 shadow-2"
+                    />
+                  </div>
+                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
                 </div>
-                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
-              </div>
-            </template>
-          </Carousel>
-        </div>
-        <div v-if="comedyResults">
-          <h2>Action</h2>
-          <Carousel
-            :value="actionResults"
-            :numVisible="8"
-            :numScroll="8"
-            :responsiveOptions="responsiveOptions"
-            :showIndicators="false"
-          >
-            <template #item="slotProps">
-              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-                <div class="mb-3">
-                  <img
-                    :src="slotProps.data.posterURLs[185]"
-                    :alt="slotProps.data.name"
-                    @click="handleTitleClick(slotProps.data)"
-                    class="w-6 shadow-2"
-                  />
+              </template>
+            </Carousel>
+          </div>
+          <div v-if="thrillerResults">
+            <h2>Thrillers</h2>
+            <Carousel
+              :value="thrillerResults"
+              :numVisible="8"
+              :numScroll="8"
+              :responsiveOptions="responsiveOptions"
+              :showIndicators="false"
+            >
+              <template #item="slotProps">
+                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                  <div class="mb-3">
+                    <img
+                      :src="slotProps.data.posterURLs[185]"
+                      :alt="slotProps.data.name"
+                      @click="handleTitleClick(slotProps.data)"
+                      class="w-6 shadow-2"
+                    />
+                  </div>
+                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
                 </div>
-                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
-              </div>
-            </template>
-          </Carousel>
-        </div>
-        <div v-if="comedyResults">
-          <h2>Drama</h2>
-          <Carousel
-            :value="dramaResults"
-            :numVisible="8"
-            :numScroll="8"
-            :responsiveOptions="responsiveOptions"
-            :showIndicators="false"
-          >
-            <template #item="slotProps">
-              <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-                <div class="mb-3">
-                  <img
-                    :src="slotProps.data.posterURLs[185]"
-                    :alt="slotProps.data.name"
-                    @click="handleTitleClick(slotProps.data)"
-                    class="w-6 shadow-2"
-                  />
+              </template>
+            </Carousel>
+          </div>
+          <div v-if="actionResults">
+            <h2>Action</h2>
+            <Carousel
+              :value="actionResults"
+              :numVisible="8"
+              :numScroll="8"
+              :responsiveOptions="responsiveOptions"
+              :showIndicators="false"
+            >
+              <template #item="slotProps">
+                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                  <div class="mb-3">
+                    <img
+                      :src="slotProps.data.posterURLs[185]"
+                      :alt="slotProps.data.name"
+                      @click="handleTitleClick(slotProps.data)"
+                      class="w-6 shadow-2"
+                    />
+                  </div>
+                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
                 </div>
-                <h4 class="mb-1">{{ slotProps.data.name }}</h4>
-              </div>
-            </template>
-          </Carousel>
+              </template>
+            </Carousel>
+          </div>
+          <div v-if="dramaResults">
+            <h2>Drama</h2>
+            <Carousel
+              :value="dramaResults"
+              :numVisible="8"
+              :numScroll="8"
+              :responsiveOptions="responsiveOptions"
+              :showIndicators="false"
+            >
+              <template #item="slotProps">
+                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                  <div class="mb-3">
+                    <img
+                      :src="slotProps.data.posterURLs[185]"
+                      :alt="slotProps.data.name"
+                      @click="handleTitleClick(slotProps.data)"
+                      class="w-6 shadow-2"
+                    />
+                  </div>
+                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
+                </div>
+              </template>
+            </Carousel>
+          </div>
+          <ThemeButton @click="saveDataTest">Save in db</ThemeButton>
         </div>
-        <ThemeButton @click="saveDataTest">Save in db</ThemeButton>
       </div>
     </div>
   </div>
@@ -367,11 +399,16 @@ const handleBackClick = () => {
 
 <style>
 @media (min-width: 1024px) {
-  .home {
+  .library {
     background-color: var(--surface-ground);
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .library-container {
+    width: 100%;
+    height: 100%;
   }
 
   #title-not-selected {
