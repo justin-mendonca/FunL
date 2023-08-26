@@ -177,7 +177,7 @@ provide('isLoggedIn', isLoggedIn)
 <template>
   <MenuBar class="nav" :model="menuItems">
     <template #start>
-      <img alt="logo" src="./assets/funl_logo_icon_black.png" height="40" id="logo-icon" />
+      <img alt="logo" src="./assets/funl_logo_icon.png" height="40" id="logo-icon" />
     </template>
     <template #end>
       <div v-if="isLoggedIn">
