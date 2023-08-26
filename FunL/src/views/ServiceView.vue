@@ -4,9 +4,12 @@ import ServicePicker from '@/components/ServicePicker.vue'
 import type { Services } from '@/interfaces/services'
 import { inject } from 'vue'
 import Button from 'primevue/button'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast';
 
 const isLoggedIn = inject<boolean>('isLoggedIn')
 const services = inject<Services>('services')
+const toast = useToast()
 
 const submitPreferences = async () => {
   try {
@@ -22,14 +25,29 @@ const submitPreferences = async () => {
     const response = await axios.post('http://localhost:5161/subscriptions', services, axiosConfig)
 
     console.log(response)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Subscriptions updated successfully!',
+      life: 5000
+    })
   } catch (error: any) {
     console.error('Error saving subscriptions:', error)
+
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'An error occurred while updating subscriptions.',
+      life: 5000
+    })
   }
 }
 </script>
 
 <template>
   <div class="services">
+    <Toast />
     <ServicePicker />
     <div v-if="isLoggedIn">
       <Button @click="submitPreferences">Save</Button>
