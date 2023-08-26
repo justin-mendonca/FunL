@@ -6,10 +6,14 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import OverlayPanel from 'primevue/overlaypanel'
 import ProgressSpinner from 'primevue/progressspinner'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast';
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import type { Services } from '@/interfaces/services'
 import type { SubscribedService } from '@/interfaces/subscribedService'
+
+const toast = useToast()
 
 const services: Services = reactive({
   netflix: false,
@@ -121,17 +125,24 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     const response = await axios.post(url, values)
 
-    authRequestPending.value = false
+    const { token } = response.data
 
-    if (response.status === 200) {
-      const { token } = response.data
-      localStorage.setItem('jwtToken', token)
-      isLoggedIn.value = true
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    }
+    localStorage.setItem('jwtToken', token)
+
+    isLoggedIn.value = true
+
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
   } catch (error: any) {
     console.error('Error during login:', error)
+
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: showLoginForm.value? 'An error occurred while logging in. Please try again.' : 'An error occurred while registering. Please try again.',
+      life: 5000
+    })
   }
+  authRequestPending.value = false
   hideOverlay()
 })
 
@@ -292,6 +303,7 @@ provide('isLoggedIn', isLoggedIn)
       </div>
     </template>
   </MenuBar>
+  <Toast />
   <RouterView :services="services" class="view" />
 </template>
 
