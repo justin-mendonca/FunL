@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, watch, onBefore, onMounted } from 'vue'
+import { inject, ref, onMounted } from 'vue'
 import axios from 'axios'
 import TitleDetails from '@/components/TitleDetails.vue'
 import Welcome from '@/components/Welcome.vue'
