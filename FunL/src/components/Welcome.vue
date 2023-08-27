@@ -36,7 +36,21 @@ const navigateToServices = () => {
 
 <style scoped>
 .message {
+  margin-bottom: 2%;
+}
+
+.p-message.p-message-warn {
+  display: flex;
+  height: 5%;
   width: 25%;
+}
+
+.p-message.p-message-warn .p-message-wrapper {
+  width: 100%;
+}
+
+:deep(.p-message-wrapper) {
+  width: 100%;
 }
 
 .welcome {
@@ -67,7 +81,7 @@ const navigateToServices = () => {
   font-size: 1.2rem;
 }
 .p-card .p-card-content ol li {
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 :deep(.p-card .p-card-footer) {
