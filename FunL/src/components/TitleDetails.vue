@@ -1,40 +1,48 @@
 <template>
   <div class="selected-title">
     <ThemeButton label="Back" icon="pi pi-arrow-left" size="small" @click="$emit('backClick')" />
-    <p id="title-text">{{ props.title?.name }}</p>
     <div id="title-detail-container">
       <div id="title-image">
-        <img id="poster" :src="props.title?.posterURLs[342]" alt="Movie/series poster" />
-        <em><p>{{ props.title?.tagline }}</p></em>
+        <img id="poster" :src="props.title?.posterURLs[500]" alt="Movie/series poster" />
       </div>
-      <div id="title-details">
-        <p>{{ props.title!.overview }}</p>
-        <br>
-        <p>Cast: {{ formattedCast }}</p>
-        <br>
-        <p>IMDb rating: {{ props.title!.imdbRating }}</p>
-        <div id="link-container">
-          <p>Watch on:</p>
-          <div id="available-services">
-            <div v-for="service in props.title!.streamingServices.$values" :key="service.$id">
-              <a :href="service.link" target="_blank" rel="noreferrer noopener">
-                <img
-                  :src="getServiceLogo(service.platform)"
-                  :alt="`${service.platform} logo`"
-                  class="service-imglink"
-                />
-              </a>
+      <Card id="title-details">
+        <template #title>{{ props.title?.name }}</template>
+        <template #subtitle>{{ props.title?.tagline }}</template>
+        <template #content>
+          <p>{{ props.title?.overview }}</p>
+        </template>
+        <template #footer>
+          <Panel header="Cast">
+            <p class="m-0">
+              {{ formattedCast }}
+            </p>
+          </Panel>
+          <div id="footer-container">
+            <imdbScore :imdbScore="props.title!.imdbRating" class="imdb"/>
+            <div id="available-services">
+              <div v-for="service in props.title!.streamingServices.$values" :key="service.$id">
+                <a :href="service.link" target="_blank" rel="noreferrer noopener">
+                  <img
+                    :src="getServiceLogo(service.platform)"
+                    :alt="`${service.platform} logo`"
+                    class="service-imglink"
+                  />
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+      </Card>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { FetchedTitle } from '@/interfaces/fetchedTitle';
+import type { FetchedTitle } from '@/interfaces/fetchedTitle'
+import Card from 'primevue/card'
+import Panel from 'primevue/panel'
+import imdbScore from './Score.vue'
 
 const props = defineProps({
   title: {
@@ -43,6 +51,7 @@ const props = defineProps({
 })
 
 const formattedCast = computed(() => {
+  console.log(props.title?.posterURLs)
   return props.title?.cast.$values.join(', ')
 })
 
@@ -94,26 +103,32 @@ const getServiceLogo = (serviceName: String) => {
 #title-image {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-width: 35%;
+  align-items: end;
+  width: 40%;
 }
 
 #poster {
   border-radius: 2%;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0.19);
-  margin-bottom: 3%;
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0.19);
+  margin-right: 3%;
 }
 
 #title-details {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding-left: 2%;
+  width: 50%;
 }
 
-#link-container {
+#footer-container {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   margin-top: 2%;
+  align-items: center;
+}
+
+.imdb {
+  width: 60%;
 }
 
 #available-services {
@@ -126,6 +141,12 @@ const getServiceLogo = (serviceName: String) => {
   margin-top: 5%;
   object-fit: cover;
   border-radius: 3%;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0.19);
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0.19);
+}
+
+.service-imglink :hover {
+  
 }
 </style>
