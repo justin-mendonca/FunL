@@ -44,7 +44,7 @@ watchEffect(async () => {
   }
 
   if (isLoggedIn.value === true) {
-    const response = await axios.get('http://localhost:5161/subscriptions', axiosConfig)
+    const response = await axios.get('http://jpmoregain-001-site1.gtempurl.com/subscriptions', axiosConfig)
 
     if (response.status === 200) {
       const subscribedServicesArr = response.data.data.$values
@@ -121,7 +121,7 @@ const { value: confirmPassword, errorMessage: confirmPasswordErrorMessage } = us
 const onSubmit = handleSubmit(async (values) => {
   authRequestPending.value = true
   const endpoint = showLoginForm.value ? 'login' : 'register'
-  const url = `http://localhost:5161/user/${endpoint}`
+  const url = `http://jpmoregain-001-site1.gtempurl.com/user/${endpoint}`
   try {
     const response = await axios.post(url, values)
 
