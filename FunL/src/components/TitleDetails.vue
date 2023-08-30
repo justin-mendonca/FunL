@@ -146,7 +146,7 @@ const getServiceLogo = (serviceName: String) => {
     0 6px 20px 0 rgba(0, 0, 0.19);
 }
 
-.service-imglink :hover {
-  
+.service-imglink:hover {
+  opacity: 0.7;
 }
 </style>
