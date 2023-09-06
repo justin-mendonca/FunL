@@ -22,7 +22,7 @@ const submitPreferences = async () => {
       }
     }
 
-    const response = await axios.post('http://jpmoregain-001-site1.gtempurl.com/subscriptions', services, axiosConfig)
+    const response = await axios.post('https://jpmoregain-001-site1.gtempurl.com/subscriptions', services, axiosConfig)
 
     console.log(response)
 

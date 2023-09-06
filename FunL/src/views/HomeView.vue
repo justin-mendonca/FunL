@@ -96,12 +96,6 @@ const isLoading = ref(true)
 const services = inject<Services>('services')!
 const searchResults = inject<FetchedTitle[]>('searchResults')!
 
-const test = async () => {
-  const response = await axios.get('http://jpmoregain-001-site1.gtempurl.com/user/health')
-
-  console.log(response)
-}
-
 const getData = async (subscriptionResponse: any) => {
   const arr: string[] = []
 
@@ -112,7 +106,7 @@ const getData = async (subscriptionResponse: any) => {
   })
 
   try {
-    const response = await axios.post('http://jpmoregain-001-site1.gtempurl.com/platform/GetTitles', arr)
+    const response = await axios.post('https://jpmoregain-001-site1.gtempurl.com/platform/GetTitles', arr)
     const fetchedTitles = response.data.data.$values
     fetchedTitles.forEach((title: FetchedTitle) => {
       if (title.genres.$values.length > 0) {
@@ -141,7 +135,7 @@ onMounted(async () => {
       }
     }
 
-    const response = await axios.get('http://jpmoregain-001-site1.gtempurl.com/subscriptions', axiosConfig)
+    const response = await axios.get('https://jpmoregain-001-site1.gtempurl.com/subscriptions', axiosConfig)
     console.log(response)
     if (response.status === 200) {
       await getData(response)
@@ -271,7 +265,7 @@ const getDataTest = async () => {
 
 const saveDataTest = async () => {
   try {
-    const response = await axios.post('http://jpmoregain-001-site1.gtempurl.com/platform', searchResults)
+    const response = await axios.post('https://jpmoregain-001-site1.gtempurl.com/platform', searchResults)
     console.log(response)
   } catch (error: any) {
     console.log(error.response)
@@ -297,7 +291,6 @@ const handleBackClick = () => {
       <div v-else id="title-not-selected">
         <div v-if="searchResults.length === 0" id="welcome">
           <Welcome />
-          <ThemeButton @click="test">Get Data</ThemeButton>
         </div>
         <div v-else id="title-image-container">
           <div v-if="comedyResults">
@@ -396,7 +389,7 @@ const handleBackClick = () => {
               </template>
             </Carousel>
           </div>
-          <ThemeButton @click="saveDataTest">Save in db</ThemeButton>
+          <!-- <ThemeButton @click="saveDataTest">Save in db</ThemeButton> -->
         </div>
       </div>
     </div>

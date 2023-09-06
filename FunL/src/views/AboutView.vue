@@ -1,40 +1,33 @@
 <script setup lang="ts">
-import Accordion from 'primevue/accordion';
-import AccordionTab from 'primevue/accordiontab';
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
+import Card from 'primevue/card'
 </script>
 
 <template>
   <div class="about">
-    <Accordion :multiple="true" :activeIndex="[0]" class="accordion">
-      <AccordionTab header="Header I">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-          ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-          sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum.
-        </p>
-      </AccordionTab>
-      <AccordionTab header="Header II">
-        <p>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-          laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-          architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
-          voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-        </p>
-      </AccordionTab>
-      <AccordionTab header="Header III">
-        <p>
-          At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
-          voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-          cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id
-          est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam
-          libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
-        </p>
-      </AccordionTab>
-    </Accordion>
+    <Card class="card">
+      <template #title> FAQs </template>
+      <template #content>
+        <Accordion :multiple="true" :activeIndex="[0]" class="accordion">
+          <AccordionTab header="How do I report a bug?">
+            <p>
+              FunL is still in beta testing and relies on users like you to identify bugs or issues that detract from your experience! If you want to bring something to our attention, please email us at bugs@funl.com.
+            </p>
+          </AccordionTab>
+          <AccordionTab header="Can I use FunL on my smart TV?">
+            <p>
+              Currently FunL is not supported on smart TVs. However, we are in the process of developing a TV-compatible app and will share updates on this endeavor on our socials!
+            </p>
+          </AccordionTab>
+          <AccordionTab header="Who will win the 'HP Take the Wheel' fantasy football league this year?">
+            <p>
+              Justin will win, obviously. Casso is a snake and Kris should just buy stock in FantasyPros at this point.
+            </p>
+          </AccordionTab>
+        </Accordion>
+      </template>
+    </Card>
   </div>
 </template>
 
@@ -47,8 +40,11 @@ import AccordionTab from 'primevue/accordiontab';
     justify-content: center;
   }
 
+  .card {
+    width: 80%;
+  }
   .accordion {
-    width: 50%;
+    width: 100%;
   }
 }
 </style>
