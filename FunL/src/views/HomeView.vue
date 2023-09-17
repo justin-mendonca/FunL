@@ -75,8 +75,8 @@ const genreMap = new Map([
 const responsiveOptions = ref([
   {
     breakpoint: '1199px',
-    numVisible: 4,
-    numScroll: 4
+    numVisible: 8,
+    numScroll: 8
   },
   {
     breakpoint: '991px',
@@ -106,7 +106,10 @@ const getData = async (subscriptionResponse: any) => {
   })
 
   try {
-    const response = await axios.post('https://jpmoregain-001-site1.gtempurl.com/platform/GetTitles', arr)
+    const response = await axios.post(
+      'https://jpmoregain-001-site1.gtempurl.com/platform/GetTitles',
+      arr
+    )
     const fetchedTitles = response.data.data.$values
     fetchedTitles.forEach((title: FetchedTitle) => {
       if (title.genres.$values.length > 0) {
@@ -135,14 +138,16 @@ onMounted(async () => {
       }
     }
 
-    const response = await axios.get('https://jpmoregain-001-site1.gtempurl.com/subscriptions', axiosConfig)
+    const response = await axios.get(
+      'https://jpmoregain-001-site1.gtempurl.com/subscriptions',
+      axiosConfig
+    )
     console.log(response)
     if (response.status === 200) {
       await getData(response)
     }
-  }
-  else {
-    isLoading.value = false;
+  } else {
+    isLoading.value = false
   }
 })
 
@@ -265,7 +270,10 @@ const getDataTest = async () => {
 
 const saveDataTest = async () => {
   try {
-    const response = await axios.post('https://jpmoregain-001-site1.gtempurl.com/platform', searchResults)
+    const response = await axios.post(
+      'https://jpmoregain-001-site1.gtempurl.com/platform',
+      searchResults
+    )
     console.log(response)
   } catch (error: any) {
     console.log(error.response)
@@ -393,93 +401,64 @@ const handleBackClick = () => {
 </template>
 
 <style>
+.library {
+  background-color: var(--surface-ground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .p-carousel {
-    max-width: 95vw;
-  }
-  
+  max-width: 95vw;
+}
+
+.library-container {
+  width: 100%;
+  height: 100%;
+}
+
+#title-not-selected {
+  width: 100%;
+  height: 100%;
+}
+
+#welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+#title-image-container {
+  display: grid;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
 @media (min-width: 1024px) {
-  .library {
-    background-color: var(--surface-ground);
+  .carousel-image-container {
+    height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .library-container {
-    width: 100%;
-    height: 100%;
-  }
-
-  #title-not-selected {
-    width: 100%;
-    height: 100%;
-  }
-
-  #welcome {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  #title-image-container {
-    display: grid;
-    width: 100%;
     justify-content: center;
     align-items: center;
+    border: 1px solid #ccc;
   }
 
-  .p-carousel {
-    max-width: 95vw;
+  .mb-3 {
+    height: 100%;
+    width: 100%;
   }
 
-  .p-carousel-item {
+  .poster {
     width: 100%;
     height: 100%;
-  }
-
-  .mb-3 img {
-    width: 100%;
-  }
-  .mb-1 {
-    text-align: center;
   }
 }
 
 @media (max-width: 768px) {
-  .library {
-    background-color: var(--surface-ground);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .library-container {
-    width: 100%;
-    height: 100%;
-  }
-
-  #title-not-selected {
-    width: 100%;
-    height: 100%;
-  }
-
-  #welcome {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-
-  #title-image-container {
-    display: grid;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-  }
-
   .carousel-image-container {
     height: 160px;
     display: flex;
@@ -490,6 +469,7 @@ const handleBackClick = () => {
 
   .mb-3 {
     height: 100%;
+    width: 100%;
   }
 
   .poster {
