@@ -5,7 +5,7 @@ import type { Services } from '@/interfaces/services'
 import { inject } from 'vue'
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast';
+import Toast from 'primevue/toast'
 
 const isLoggedIn = inject<boolean>('isLoggedIn')
 const services = inject<Services>('services')
@@ -17,12 +17,16 @@ const submitPreferences = async () => {
 
     const axiosConfig = {
       headers: {
-        'Authorization': `Bearer ${jwtToken}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json'
       }
     }
 
-    const response = await axios.post('https://jpmoregain-001-site1.gtempurl.com/subscriptions', services, axiosConfig)
+    const response = await axios.post(
+      'https://jpmoregain-001-site1.gtempurl.com/subscriptions',
+      services,
+      axiosConfig
+    )
 
     console.log(response)
 
@@ -56,12 +60,10 @@ const submitPreferences = async () => {
 </template>
 
 <style>
-@media (min-width: 1024px) {
-  .services {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+.services {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>

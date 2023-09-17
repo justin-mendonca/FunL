@@ -2,7 +2,7 @@
   <div class="service-picker">
     <div id="services-container">
       <div v-for="(value, key) in services" :key="key">
-        <StreamingService :serviceName="key"/>
+        <StreamingService :serviceName="key" />
       </div>
     </div>
   </div>
@@ -46,4 +46,24 @@ export default {
   min-height: 200px;
 }
 
+@media (max-width: 768px) {
+  .service-picker {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2%;
+    margin-top: 2%;
+  }
+
+  #services-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    width: 100%;
+    height: 100%;
+  }
+}
 </style>
