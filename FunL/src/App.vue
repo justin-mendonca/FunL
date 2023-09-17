@@ -319,10 +319,14 @@ provide('isLoggedIn', isLoggedIn)
 }
 
 .view {
-    width: 100vw;
-    height: 95vh;
-  }
-  
+  width: 100vw;
+  height: 95vh;
+}
+
+.swap-link {
+  font-weight: 600;
+}
+
 @media (min-width: 1024px) {
   .nav {
     padding: 0 10px;
@@ -330,11 +334,6 @@ provide('isLoggedIn', isLoggedIn)
 
   .nav img {
     margin-right: auto;
-  }
-
-  .view {
-    width: 100vw;
-    height: 95vh;
   }
 
   .form-container {
@@ -374,10 +373,6 @@ provide('isLoggedIn', isLoggedIn)
     margin-top: -10px;
   }
 
-  .swap-link {
-    font-weight: 600;
-  }
-
   :deep(.p-menubar-start) {
     display: flex;
   }
@@ -411,6 +406,36 @@ provide('isLoggedIn', isLoggedIn)
 
   :deep(.p-menubar-button) {
     margin-left: auto;
+  }
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .submit-button {
+    width: 55%;
+    margin-top: -10px;
+  }
+
+  .p-error {
+    margin-top: -20px;
+  }
+
+  .swap-form {
+    font-size: 0.95em;
+    margin-top: -10px;
   }
 }
 </style>

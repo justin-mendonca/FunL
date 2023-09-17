@@ -428,7 +428,6 @@ const handleBackClick = () => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
 }
 
 #title-image-container {
@@ -439,6 +438,9 @@ const handleBackClick = () => {
 }
 
 @media (min-width: 1024px) {
+  #welcome {
+    height: 100%;
+  }
   .carousel-image-container {
     height: 100%;
     display: flex;

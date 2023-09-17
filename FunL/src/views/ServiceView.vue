@@ -54,7 +54,7 @@ const submitPreferences = async () => {
     <Toast />
     <ServicePicker />
     <div v-if="isLoggedIn">
-      <Button @click="submitPreferences">Save</Button>
+      <Button @click="submitPreferences" style="margin-bottom: 10px;">Save</Button>
     </div>
   </div>
 </template>
