@@ -393,6 +393,10 @@ const handleBackClick = () => {
 </template>
 
 <style>
+.p-carousel {
+    max-width: 95vw;
+  }
+  
 @media (min-width: 1024px) {
   .library {
     background-color: var(--surface-ground);
@@ -476,59 +480,6 @@ const handleBackClick = () => {
     align-items: center;
   }
 
-  .p-carousel {
-    max-width: 95vw;
-  }
-
-  .p-carousel-item {
-    width: 100%;
-    height: 100%;
-  }
-
-  .mb-3 img {
-    width: 100%;
-  }
-  .mb-1 {
-    text-align: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .library {
-    background-color: var(--surface-ground);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .library-container {
-    width: 100%;
-    height: 100%;
-  }
-
-  #title-not-selected {
-    width: 100%;
-    height: 100%;
-  }
-
-  #welcome {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-
-  #title-image-container {
-    display: grid;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .p-carousel {
-    max-width: 95vw;
-  }
-
   .carousel-image-container {
     height: 160px;
     display: flex;
@@ -542,6 +493,7 @@ const handleBackClick = () => {
   }
 
   .poster {
+    width: 100%;
     height: 100%;
   }
 }
