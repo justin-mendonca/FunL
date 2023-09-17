@@ -7,7 +7,7 @@ import Button from 'primevue/button'
 import OverlayPanel from 'primevue/overlaypanel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast';
+import Toast from 'primevue/toast'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import type { Services } from '@/interfaces/services'
@@ -44,7 +44,10 @@ watchEffect(async () => {
   }
 
   if (isLoggedIn.value === true) {
-    const response = await axios.get('https://jpmoregain-001-site1.gtempurl.com/subscriptions', axiosConfig)
+    const response = await axios.get(
+      'https://jpmoregain-001-site1.gtempurl.com/subscriptions',
+      axiosConfig
+    )
 
     if (response.status === 200) {
       const subscribedServicesArr = response.data.data.$values
@@ -138,7 +141,9 @@ const onSubmit = handleSubmit(async (values) => {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: showLoginForm.value? 'An error occurred while logging in. Please try again.' : 'An error occurred while registering. Please try again.',
+      detail: showLoginForm.value
+        ? 'An error occurred while logging in. Please try again.'
+        : 'An error occurred while registering. Please try again.',
       life: 5000
     })
   }
@@ -311,64 +316,101 @@ provide('isLoggedIn', isLoggedIn)
 .nav {
   height: 5vh;
   width: 100%;
-  padding: 0 10px;
-}
-
-.nav img {
-  margin-right: auto;
 }
 
 .view {
-  width: 100vw;
-  height: 95vh;
+    width: 100vw;
+    height: 95vh;
+  }
+  
+@media (min-width: 1024px) {
+  .nav {
+    padding: 0 10px;
+  }
+
+  .nav img {
+    margin-right: auto;
+  }
+
+  .view {
+    width: 100vw;
+    height: 95vh;
+  }
+
+  .form-container {
+    min-width: 270px;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    gap: 20px;
+  }
+
+  .auth-form span input {
+    width: 250px;
+  }
+
+  .p-error {
+    margin-top: -20px;
+    text-align: center;
+  }
+
+  .submit-button {
+    width: 65%;
+    margin-top: -10px;
+  }
+
+  .swap-form {
+    display: flex;
+    font-size: 0.9em;
+    gap: 3px;
+    margin-top: -10px;
+  }
+
+  .swap-link {
+    font-weight: 600;
+  }
+
+  :deep(.p-menubar-start) {
+    display: flex;
+  }
+
+  #logo-icon {
+    margin-top: 1px;
+  }
 }
 
-.form-container {
-  min-width: 270px;
-  min-height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  gap: 20px;
-}
+@media (max-width: 768px) {
+  .nav {
+    display: flex;
+    justify-content: space-between;
+  }
 
-.auth-form span input {
-  width: 250px;
-}
+  #app > div.p-menubar.p-component.nav {
+    padding: 0;
+  }
 
-.p-error {
-  margin-top: -20px;
-  text-align: center;
-}
+  :deep(#app > div.p-menubar.p-component.nav > div.p-menubar-start) {
+    margin-right: auto;
+  }
 
-.submit-button {
-  width: 65%;
-  margin-top: -10px;
-}
+  #logo-icon {
+    padding-top: 3px;
+  }
 
-.swap-form {
-  display: flex;
-  font-size: 0.9em;
-  gap: 3px;
-  margin-top: -10px;
-}
+  :deep(.p-menubar-end) {
+    padding-right: 4px;
+  }
 
-.swap-link {
-  font-weight: 600;
-}
-
-:deep(.p-menubar-start) {
-  display: flex;
-}
-
-#logo-icon {
-  margin-top: 1px;
+  :deep(.p-menubar-button) {
+    margin-left: auto;
+  }
 }
 </style>
