@@ -80,13 +80,13 @@ const responsiveOptions = ref([
   },
   {
     breakpoint: '991px',
-    numVisible: 2,
-    numScroll: 2
+    numVisible: 3,
+    numScroll: 3
   },
   {
     breakpoint: '767px',
-    numVisible: 1,
-    numScroll: 1
+    numVisible: 3,
+    numScroll: 3
   }
 ])
 
@@ -303,16 +303,15 @@ const handleBackClick = () => {
               :showIndicators="false"
             >
               <template #item="slotProps">
-                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="carousel-image-container">
                   <div class="mb-3">
                     <img
                       :src="slotProps.data.posterURLs[185]"
                       :alt="slotProps.data.name"
                       @click="handleTitleClick(slotProps.data)"
-                      class="w-6 shadow-2"
+                      class="poster"
                     />
                   </div>
-                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
                 </div>
               </template>
             </Carousel>
@@ -327,16 +326,15 @@ const handleBackClick = () => {
               :showIndicators="false"
             >
               <template #item="slotProps">
-                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="carousel-image-container">
                   <div class="mb-3">
                     <img
                       :src="slotProps.data.posterURLs[185]"
                       :alt="slotProps.data.name"
                       @click="handleTitleClick(slotProps.data)"
-                      class="w-6 shadow-2"
+                      class="poster"
                     />
                   </div>
-                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
                 </div>
               </template>
             </Carousel>
@@ -351,16 +349,15 @@ const handleBackClick = () => {
               :showIndicators="false"
             >
               <template #item="slotProps">
-                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="carousel-image-container">
                   <div class="mb-3">
                     <img
                       :src="slotProps.data.posterURLs[185]"
                       :alt="slotProps.data.name"
                       @click="handleTitleClick(slotProps.data)"
-                      class="w-6 shadow-2"
+                      class="poster"
                     />
                   </div>
-                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
                 </div>
               </template>
             </Carousel>
@@ -375,16 +372,15 @@ const handleBackClick = () => {
               :showIndicators="false"
             >
               <template #item="slotProps">
-                <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div class="carousel-image-container">
                   <div class="mb-3">
                     <img
                       :src="slotProps.data.posterURLs[185]"
                       :alt="slotProps.data.name"
                       @click="handleTitleClick(slotProps.data)"
-                      class="w-6 shadow-2"
+                      class="poster"
                     />
                   </div>
-                  <h4 class="mb-1">{{ slotProps.data.name }}</h4>
                 </div>
               </template>
             </Carousel>
@@ -494,6 +490,59 @@ const handleBackClick = () => {
   }
   .mb-1 {
     text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .library {
+    background-color: var(--surface-ground);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .library-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  #title-not-selected {
+    width: 100%;
+    height: 100%;
+  }
+
+  #welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  #title-image-container {
+    display: grid;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .p-carousel {
+    max-width: 95vw;
+  }
+
+  .carousel-image-container {
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+  }
+
+  .mb-3 {
+    height: 100%;
+  }
+
+  .poster {
+    height: 100%;
   }
 }
 </style>
