@@ -144,7 +144,7 @@ const onSubmit = handleSubmit(async (values) => {
       detail: showLoginForm.value
         ? 'An error occurred while logging in. Please try again.'
         : 'An error occurred while registering. Please try again.',
-      life: 30000000
+      life: 5000
     })
   }
   authRequestPending.value = false
@@ -308,7 +308,7 @@ provide('isLoggedIn', isLoggedIn)
       </div>
     </template>
   </MenuBar>
-  <Toast class="toast"/>
+  <Toast class="toast" />
   <RouterView :services="services" class="view" />
 </template>
 
@@ -379,6 +379,62 @@ provide('isLoggedIn', isLoggedIn)
 
   #logo-icon {
     margin-top: 1px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .nav {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #app > div.p-menubar.p-component.nav {
+    padding: 0;
+  }
+
+  :deep(.p-menubar-button) {
+    margin-left: auto;
+  }
+
+  :deep(.p-menubar-end) {
+    padding-right: 4px;
+  }
+
+  .form-container {
+    min-width: 270px;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    gap: 20px;
+  }
+
+  .auth-form span input {
+    width: 250px;
+  }
+
+  .p-error {
+    margin-top: -20px;
+    text-align: center;
+  }
+
+  .submit-button {
+    width: 65%;
+    margin-top: -10px;
+  }
+
+  .swap-form {
+    display: flex;
+    font-size: 0.9em;
+    gap: 3px;
+    margin-top: -10px;
   }
 }
 
