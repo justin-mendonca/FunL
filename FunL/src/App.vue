@@ -211,7 +211,7 @@ provide('isLoggedIn', isLoggedIn)
           <OverlayPanel ref="loginForm">
             <form @submit.prevent="onSubmit" class="form-container">
               <div v-if="authRequestPending">
-                <ProgressSpinner />
+                <ProgressSpinner class="spinner" />
               </div>
               <div v-else class="auth-form">
                 <span class="p-float-label">
@@ -257,7 +257,7 @@ provide('isLoggedIn', isLoggedIn)
           <OverlayPanel ref="registerForm">
             <form @submit.prevent="onSubmit" class="form-container">
               <div v-if="authRequestPending">
-                <ProgressSpinner />
+                <ProgressSpinner class="spinner" />
               </div>
               <div v-else class="auth-form">
                 <span class="p-float-label">
@@ -492,6 +492,11 @@ provide('isLoggedIn', isLoggedIn)
   .swap-form {
     font-size: 0.95em;
     margin-top: -10px;
+  }
+
+  .spinner {
+    width: 200px;
+    height: 200px;
   }
 }
 </style>
