@@ -144,7 +144,7 @@ const onSubmit = handleSubmit(async (values) => {
       detail: showLoginForm.value
         ? 'An error occurred while logging in. Please try again.'
         : 'An error occurred while registering. Please try again.',
-      life: 5000
+      life: 30000000
     })
   }
   authRequestPending.value = false
@@ -308,7 +308,7 @@ provide('isLoggedIn', isLoggedIn)
       </div>
     </template>
   </MenuBar>
-  <Toast />
+  <Toast class="toast"/>
   <RouterView :services="services" class="view" />
 </template>
 

@@ -5,7 +5,6 @@ import type { Services } from '@/interfaces/services'
 import { inject } from 'vue'
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast'
 
 const isLoggedIn = inject<boolean>('isLoggedIn')
 const services = inject<Services>('services')
@@ -51,7 +50,6 @@ const submitPreferences = async () => {
 
 <template>
   <div class="services">
-    <Toast />
     <ServicePicker />
     <div v-if="isLoggedIn">
       <Button @click="submitPreferences" style="margin-bottom: 10px;">Save</Button>
