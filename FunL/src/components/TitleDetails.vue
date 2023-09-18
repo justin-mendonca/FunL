@@ -1,6 +1,6 @@
 <template>
   <div class="selected-title">
-    <ThemeButton label="Back" icon="pi pi-arrow-left" size="small" @click="$emit('backClick')" />
+    <ThemeButton label="Back" icon="pi pi-arrow-left" size="small" class="back-button" @click="$emit('backClick')" />
     <div id="title-detail-container">
       <div id="title-image">
         <img id="poster" :src="props.title?.posterURLs[500]" alt="Movie/series poster" />
@@ -18,7 +18,7 @@
             </p>
           </Panel>
           <div id="footer-container">
-            <imdbScore :imdbScore="props.title!.imdbRating" class="imdb"/>
+            <imdbScore :imdbScore="props.title!.imdbRating" class="imdb" />
             <div id="available-services">
               <div v-for="service in props.title!.streamingServices.$values" :key="service.$id">
                 <a :href="service.link" target="_blank" rel="noreferrer noopener">
@@ -85,7 +85,6 @@ const getServiceLogo = (serviceName: String) => {
 .selected-title {
   width: 100vw;
   box-sizing: border-box;
-  padding: 1%;
 }
 
 #title-text {
@@ -112,7 +111,6 @@ const getServiceLogo = (serviceName: String) => {
   box-shadow:
     0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 20px 0 rgba(0, 0, 0.19);
-  margin-right: 3%;
 }
 
 #title-details {
@@ -133,12 +131,10 @@ const getServiceLogo = (serviceName: String) => {
 
 #available-services {
   display: flex;
-  gap: 10px;
 }
 .service-imglink {
   width: 300px;
   height: 150px;
-  margin-top: 5%;
   object-fit: cover;
   border-radius: 3%;
   box-shadow:
@@ -148,5 +144,48 @@ const getServiceLogo = (serviceName: String) => {
 
 .service-imglink:hover {
   opacity: 0.7;
+}
+
+@media (min-width: 1024px) {
+  .selected-title {
+    padding: 1%;
+  }
+
+  #poster {
+    margin-right: 3%;
+  }
+
+  #available-services {
+    gap: 10px;
+  }
+
+  .service-imglink {
+    margin-top: 5%;
+  }
+}
+
+@media (max-width: 768px) {
+  #title-detail-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  #title-image {
+    width: 100%;
+    align-items: center;
+  }
+  #poster {
+    width: 90%;
+  }
+  #title-details {
+    width: 95%;
+    align-self: center;
+  }
+  #available-services {
+    flex-direction: column;
+    margin-top: 10px;
+  }
+  .back-button {
+    margin: 2%;
+  }
 }
 </style>
