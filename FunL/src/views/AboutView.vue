@@ -54,13 +54,30 @@ import Card from 'primevue/card'
   }
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .card {
-    width: 80%;
+    width: 90%;
+  }
+  .accordion {
+    width: 100%;
+  }
+  .p-card-title {
+    font-size: 3rem !important;
+  }
+  .p-accordion-header-text {
+    font-size: 1.7rem;
+  }
+  .p-toggleable-content {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
   }
   .accordion {
     width: 100%;
   }
 }
-
 </style>

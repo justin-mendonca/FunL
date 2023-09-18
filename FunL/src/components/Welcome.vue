@@ -114,6 +114,49 @@ const navigateToServices = () => {
   border-radius: 2%;
 }
 
+@media (min-width: 768px) and (max-width: 1024px) {
+  .p-message.p-message-warn {
+    width: 70%;
+  }
+
+  .welcome {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 20px;
+  }
+
+  .logo {
+    width: 95%;
+    height: 30%;
+    box-shadow:
+      0 4px 8px 0 rgba(0, 0, 0, 0.2),
+      0 6px 20px 0 rgba(0, 0, 0.19);
+    border-radius: 2%;
+  }
+
+  .card {
+    justify-content: center;
+    width: 95%;
+    height: 100%;
+    box-shadow:
+      0 4px 8px 0 rgba(0, 0, 0, 0.2),
+      0 6px 20px 0 rgba(0, 0, 0.19);
+    border-radius: 2%;
+    font-size: 1.4rem;
+  }
+
+  :deep(.p-card .p-card-title) {
+    font-size: 3rem;
+  }
+
+  :deep(.p-card .p-card-subtitle) {
+    font-size: 1.8rem;
+  }
+}
+
 @media (max-width: 768px) {
   .p-message.p-message-warn {
     width: 80%;
