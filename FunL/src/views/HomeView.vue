@@ -3,14 +3,10 @@ import { inject, ref, onMounted } from 'vue'
 import axios from 'axios'
 import TitleDetails from '@/components/TitleDetails.vue'
 import Welcome from '@/components/Welcome.vue'
-import type { Services } from '@/interfaces/services'
 import Carousel from 'primevue/carousel'
 import ProgressSpinner from 'primevue/progressspinner'
-import type { StreamingInfo } from '@/interfaces/streamingInfo'
 import type { FetchedTitle } from '@/interfaces/fetchedTitle'
 import type { SubscribedService } from '@/interfaces/subscribedService'
-const apiKey = import.meta.env.VITE_API_KEY
-const host = import.meta.env.VITE_HOST
 
 // Local state
 const selectedTitle = ref<FetchedTitle | null>(null)
@@ -93,7 +89,6 @@ const responsiveOptions = ref([
 const isLoading = ref(true)
 
 // Pull in global state
-const services = inject<Services>('services')!
 const searchResults = inject<FetchedTitle[]>('searchResults')!
 
 const getData = async (subscriptionResponse: any) => {
@@ -150,135 +145,6 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
-
-const formatServices = () => {
-  let s = ''
-  for (const serviceName in services) {
-    if (services[serviceName as keyof Services]) {
-      s = s.concat(serviceName.toLowerCase() + ',')
-    }
-  }
-  // remove trailing comma
-  return s.slice(0, -1)
-}
-
-const fetchFromApi = async () => {
-  const formattedServices = formatServices()
-
-  const getPage = async (nextCursor = null) => {
-    const options = {
-      method: 'GET',
-      url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
-      params: {
-        country: 'us',
-        services: formattedServices,
-        cursor: nextCursor
-      },
-      headers: {
-        'X-RapidAPI-Key': apiKey,
-        'X-RapidAPI-Host': host
-      }
-    }
-
-    try {
-      const response = await axios.request(options)
-      const { data } = response
-      data.result.forEach((result: any) => {
-        const flattenedInfo = flattenStreamingInfo(result.streamingInfo, options.params.country)
-
-        // If the flattenedInfo array is empty, skip this result
-        if (flattenedInfo.length === 0) return
-
-        searchResults.push({
-          ...result,
-          streamingInfo: flattenedInfo
-        })
-      })
-
-      if (data.hasMore) {
-        await getPage(data.nextCursor)
-      } else {
-        console.log(searchResults)
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  await getPage()
-}
-
-const flattenStreamingInfo = (streamingInfo: StreamingInfo, country: string) => {
-  const flattenedInfo = []
-
-  const servicesAvailable = streamingInfo[country]
-
-  for (const service in servicesAvailable) {
-    const waysToWatchTitleOnService = servicesAvailable[service]
-    for (const wayToWatch of waysToWatchTitleOnService) {
-      // Right now this is filtering out viable titles (I.e., can be watched with just a subscription) if they are available on a service that is not in the current services interface
-      // Can potentially expand the supported services later on and remove the second part of this conditional check
-      if (wayToWatch.type !== 'subscription' || !Object.keys(services).includes(service)) continue
-
-      flattenedInfo.push({
-        ...wayToWatch,
-        Country: country,
-        Platform: service
-      })
-    }
-  }
-  return flattenedInfo
-}
-
-const getDataTest = async () => {
-  const formattedServices = formatServices()
-
-  const options = {
-    method: 'GET',
-    url: 'https://streaming-availability.p.rapidapi.com/v2/search/basic',
-    params: {
-      country: 'us',
-      services: formattedServices
-    },
-    headers: {
-      'X-RapidAPI-Key': apiKey,
-      'X-RapidAPI-Host': host
-    }
-  }
-
-  try {
-    const response = await axios.request(options)
-    const { data } = response
-
-    data.result.forEach((result: any) => {
-      const flattenedInfo = flattenStreamingInfo(result.streamingInfo, options.params.country)
-
-      // If the flattenedInfo array is empty, skip this result
-      if (flattenedInfo.length === 0) return
-
-      searchResults.push({
-        ...result,
-        streamingInfo: flattenedInfo
-      })
-    })
-
-    console.log(searchResults)
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const saveDataTest = async () => {
-  try {
-    const response = await axios.post(
-      'https://jpmoregain-001-site1.gtempurl.com/platform',
-      searchResults
-    )
-    console.log(response)
-  } catch (error: any) {
-    console.log(error.response)
-  }
-}
 
 const handleTitleClick = (title: FetchedTitle) => {
   selectedTitle.value = title
@@ -393,7 +259,6 @@ const handleBackClick = () => {
               </template>
             </Carousel>
           </div>
-          <!-- <ThemeButton @click="saveDataTest">Save in db</ThemeButton> -->
         </div>
       </div>
     </div>
