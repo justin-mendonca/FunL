@@ -11,6 +11,7 @@ import type { SubscribedService } from '@/interfaces/subscribedService'
 
 // Pull in global state
 const searchResults = inject<FetchedTitle[]>('searchResults')!
+const services = inject('services') as any;
 
 // Local state
 const selectedTitle = ref<FetchedTitle | null>(null)
@@ -46,7 +47,7 @@ const filteredGenreMap = computed(() => {
   return filteredMap
 })
 
-const getData = async (subscriptionResponse: any) => {
+const getUserData = async (subscriptionResponse: any) => {
   const arr: string[] = []
 
   const userSubscriptions = subscriptionResponse.data.data.$values
@@ -79,8 +80,55 @@ const getData = async (subscriptionResponse: any) => {
   }
 }
 
+const getSelectedServicesData = async (servicesArr: string[]) => {
+  const arr: string[] = []
+  
+  for (const platformName in services) {
+    if (services[platformName] === true) arr.push(platformName)
+  }
+
+  try {
+    const response = await axios.post(
+      'https://jpmoregain-001-site1.gtempurl.com/platform/GetTitles',
+      arr
+    )
+    const fetchedTitles = response.data.data.$values
+    fetchedTitles.forEach((title: FetchedTitle) => {
+      if (title.genres.$values.length > 0) {
+        const genre = title.genres.$values[title.genres.$values.length - 1]
+
+        if (!genreMap.value.has(genre)) {
+          genreMap.value.set(genre, [])
+        }
+
+        genreMap.value.get(genre).push(title)
+      }
+    })
+    searchResults.push(...fetchedTitles)
+    isLoading.value = false
+  } catch (error: any) {
+    console.log(error)
+  }
+}
+
 onMounted(async () => {
   const isLoggedIn = !!localStorage.getItem('jwtToken')
+
+  let servicesAreSelected = false
+
+  const arr: string[] = []
+  
+  for (const platformName in services) {
+    if (services[platformName] === true) {
+      servicesAreSelected = true;
+      arr.push(platformName)
+    }
+  }
+
+  if (!isLoggedIn && !servicesAreSelected) {
+    isLoading.value = false
+    return
+  }
 
   if (isLoggedIn) {
     const jwtToken = localStorage.getItem('jwtToken')
@@ -96,10 +144,11 @@ onMounted(async () => {
       'https://jpmoregain-001-site1.gtempurl.com/subscriptions',
       axiosConfig
     )
-    console.log(response)
     if (response.status === 200) {
-      await getData(response)
+      await getUserData(response)
     }
+  } else if (!isLoggedIn) {
+    await getSelectedServicesData(arr)
   } else {
     isLoading.value = false
   }
