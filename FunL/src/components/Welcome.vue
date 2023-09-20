@@ -13,26 +13,42 @@
           Before we can load your library we need to know what streaming services you are subscribed
           to.
         </p>
-        <ol>
-          <li>Click the button below to navigate to the streaming service selection page.</li>
-          <li>
-            Select all of the streaming services you are subscribed to by clicking on each of them -
-            you will know when a streaming service is selected because it will have a green
-            checkmark on it.
-          </li>
-          <li>Click the "Save" button to save your subscriptions.</li>
-          <li>
-            Next time you click on the "Library" tab, your library will load with all of the titles
-            available across all of your streaming platforms!
-          </li>
-        </ol>
-      </template>
-      <template #footer>
-        <Button
-          @click="navigateToServices"
-          icon="pi pi-arrow-circle-right"
-          label="Save Streaming Subscriptions"
-        />
+        <div class="instructions-list">
+          <div class="instruction">
+            <Badge value="1"></Badge>
+            <p>Click the button below to navigate to the streaming service selection page.</p>
+          </div>
+          <Button
+            @click="navigateToServices"
+            icon="pi pi-arrow-circle-right"
+            label="Save Streaming Subscriptions"
+            class="save-subscriptions"
+          />
+          <div class="instruction">
+            <Badge value="2"></Badge>
+            <p>
+              Select all of the streaming services you are subscribed to by clicking on each of
+              them.
+            </p>
+          </div>
+          <div class="instruction">
+            <Badge value="3"></Badge>
+            <p>
+              Click on the "Library" tab to view all of the titles available across all of your
+              streaming platforms!
+            </p>
+          </div>
+          <div class="optional-instruction">
+            <InlineMessage severity="info" class="optional">Optional</InlineMessage>
+            <div class="instruction">
+              <Badge value="4"></Badge>
+              <p>
+                Create an account and log in to be able to save your subscriptions -
+                that way your library will automatically load each time you log into FunL!
+              </p>
+            </div>
+          </div>
+        </div>
       </template>
     </Card>
   </div>
@@ -43,6 +59,8 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import router from '../router'
+import Badge from 'primevue/badge'
+import InlineMessage from 'primevue/inlinemessage'
 
 const navigateToServices = () => {
   router.push('/services')
@@ -85,6 +103,36 @@ const navigateToServices = () => {
     0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 20px 0 rgba(0, 0, 0.19);
   border-radius: 2%;
+}
+
+.instructions-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2%;
+}
+
+.save-subscriptions {
+  width: 60%;
+  margin: 2%;
+}
+
+.instruction {
+  display: flex;
+  gap: 5px;
+  margin: 1%;
+}
+
+.optional-instruction {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 1%;
+}
+
+.optional {
+  margin: 2%;
+  background-color: var(--highlight-bg) !important;
 }
 
 :deep(.p-card .p-card-title) {
