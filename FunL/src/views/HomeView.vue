@@ -5,6 +5,7 @@ import TitleDetails from '@/components/TitleDetails.vue'
 import Welcome from '@/components/Welcome.vue'
 import Carousel from 'primevue/carousel'
 import ProgressSpinner from 'primevue/progressspinner'
+import InlineMessage from 'primevue/inlinemessage'
 import type { FetchedTitle } from '@/interfaces/fetchedTitle'
 import type { SubscribedService } from '@/interfaces/subscribedService'
 
@@ -115,7 +116,12 @@ const handleBackClick = () => {
 
 <template>
   <div class="library">
-    <ProgressSpinner v-if="isLoading" aria-label="Loading" class="spinner" />
+    <div v-if="isLoading" class="loading-container">
+      <InlineMessage severity="info" class="loading-message"
+        >We're building your personalized library - This may take a moment.</InlineMessage
+      >
+      <ProgressSpinner aria-label="Loading" class="spinner" />
+    </div>
     <div v-else class="library-container">
       <div v-if="selectedTitle">
         <TitleDetails :title="selectedTitle" @backClick="handleBackClick" />
@@ -133,6 +139,7 @@ const handleBackClick = () => {
               :numScroll="8"
               :responsiveOptions="responsiveOptions"
               :showIndicators="false"
+              class="carousel"
             >
               <template #item="slotProps">
                 <div class="carousel-image-container">
@@ -192,6 +199,19 @@ const handleBackClick = () => {
   align-items: center;
 }
 
+.loading-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3%;
+}
+
+.loading-message {
+  width: 25%;
+}
 .spinner {
   width: 30% !important;
   height: 30% !important;
@@ -212,6 +232,12 @@ const handleBackClick = () => {
     0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 20px 0 rgba(0, 0, 0.19);
   background-color: var(--surface-overlay);
+}
+
+.p-carousel-items-content {
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0.19);
 }
 
 @media (min-width: 1024px) {
@@ -259,6 +285,10 @@ const handleBackClick = () => {
   .genre-badge {
     margin: 3%;
     font-size: 1rem;
+  }
+
+  .loading-message {
+    width: 80%;
   }
 }
 </style>
