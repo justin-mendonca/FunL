@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, onMounted } from 'vue'
+import { inject, ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import TitleDetails from '@/components/TitleDetails.vue'
 import Welcome from '@/components/Welcome.vue'
@@ -8,66 +8,13 @@ import ProgressSpinner from 'primevue/progressspinner'
 import type { FetchedTitle } from '@/interfaces/fetchedTitle'
 import type { SubscribedService } from '@/interfaces/subscribedService'
 
+// Pull in global state
+const searchResults = inject<FetchedTitle[]>('searchResults')!
+
 // Local state
 const selectedTitle = ref<FetchedTitle | null>(null)
-const comedyResults = ref<FetchedTitle[]>([])
-const dramaResults = ref<FetchedTitle[]>([])
-const thrillerResults = ref<FetchedTitle[]>([])
-const documentaryResults = ref<FetchedTitle[]>([])
-const crimeResults = ref<FetchedTitle[]>([])
-const horrorResults = ref<FetchedTitle[]>([])
-const biographyResults = ref<FetchedTitle[]>([])
-const actionResults = ref<FetchedTitle[]>([])
-const adventureResults = ref<FetchedTitle[]>([])
-const warResults = ref<FetchedTitle[]>([])
-const romanceResults = ref<FetchedTitle[]>([])
-const musicResults = ref<FetchedTitle[]>([])
-const familyResults = ref<FetchedTitle[]>([])
-const fantasyResults = ref<FetchedTitle[]>([])
-const historyResults = ref<FetchedTitle[]>([])
-const scienceFictionResults = ref<FetchedTitle[]>([])
-const sportResults = ref<FetchedTitle[]>([])
-const mysteryResults = ref<FetchedTitle[]>([])
-const westernResults = ref<FetchedTitle[]>([])
-const animationResults = ref<FetchedTitle[]>([])
-const musicalResults = ref<FetchedTitle[]>([])
-const shortResults = ref<FetchedTitle[]>([])
-const realityResults = ref<FetchedTitle[]>([])
-const gameShowResults = ref<FetchedTitle[]>([])
-const talkShowResults = ref<FetchedTitle[]>([])
-const newsResults = ref<FetchedTitle[]>([])
-const noirResults = ref<FetchedTitle[]>([])
-
-const genreMap = new Map([
-  ['Comedy', comedyResults],
-  ['Drama', dramaResults],
-  ['Thriller', thrillerResults],
-  ['Documentary', documentaryResults],
-  ['Crime', crimeResults],
-  ['Horror', horrorResults],
-  ['Biography', biographyResults],
-  ['Action', actionResults],
-  ['War', warResults],
-  ['Adventure', adventureResults],
-  ['Romance', romanceResults],
-  ['Music', musicResults],
-  ['Family', familyResults],
-  ['Fantasy', fantasyResults],
-  ['History', historyResults],
-  ['Science Fiction', scienceFictionResults],
-  ['Sport', sportResults],
-  ['Mystery', mysteryResults],
-  ['Western', westernResults],
-  ['Animation', animationResults],
-  ['Musical', musicalResults],
-  ['Short', shortResults],
-  ['Reality', realityResults],
-  ['Game Show', gameShowResults],
-  ['Talk Show', talkShowResults],
-  ['News', newsResults],
-  ['Film Noir', noirResults]
-])
-
+const genreMap = ref(new Map())
+const isLoading = ref(true)
 const responsiveOptions = ref([
   {
     breakpoint: '1199px',
@@ -86,10 +33,17 @@ const responsiveOptions = ref([
   }
 ])
 
-const isLoading = ref(true)
+const filteredGenreMap = computed(() => {
+  const filteredMap: Record<string, FetchedTitle[]> = {}
 
-// Pull in global state
-const searchResults = inject<FetchedTitle[]>('searchResults')!
+  for (const [genre, resultsArray] of genreMap.value) {
+    if (resultsArray.length > 0) {
+      filteredMap[genre] = resultsArray
+    }
+  }
+
+  return filteredMap
+})
 
 const getData = async (subscriptionResponse: any) => {
   const arr: string[] = []
@@ -109,8 +63,12 @@ const getData = async (subscriptionResponse: any) => {
     fetchedTitles.forEach((title: FetchedTitle) => {
       if (title.genres.$values.length > 0) {
         const genre = title.genres.$values[title.genres.$values.length - 1]
-        const resultsArray = genreMap.get(genre)!
-        resultsArray.value?.push(title)
+
+        if (!genreMap.value.has(genre)) {
+          genreMap.value.set(genre, [])
+        }
+
+        genreMap.value.get(genre).push(title)
       }
     })
     searchResults.push(...fetchedTitles)
@@ -157,7 +115,7 @@ const handleBackClick = () => {
 
 <template>
   <div class="library">
-    <ProgressSpinner v-if="isLoading" aria-label="Loading" />
+    <ProgressSpinner v-if="isLoading" aria-label="Loading" class="spinner" />
     <div v-else class="library-container">
       <div v-if="selectedTitle">
         <TitleDetails :title="selectedTitle" @backClick="handleBackClick" />
@@ -167,79 +125,10 @@ const handleBackClick = () => {
           <Welcome />
         </div>
         <div v-else id="title-image-container">
-          <div v-if="comedyResults">
-            <h2>Comedies</h2>
+          <div v-for="(resultsArray, genre) in filteredGenreMap" :key="genre">
+            <div class="genre-badge">{{ genre }}</div>
             <Carousel
-              :value="comedyResults"
-              :numVisible="8"
-              :numScroll="8"
-              :responsiveOptions="responsiveOptions"
-              :showIndicators="false"
-            >
-              <template #item="slotProps">
-                <div class="carousel-image-container">
-                  <div class="mb-3">
-                    <img
-                      :src="slotProps.data.posterURLs[185]"
-                      :alt="slotProps.data.name"
-                      @click="handleTitleClick(slotProps.data)"
-                      class="poster"
-                    />
-                  </div>
-                </div>
-              </template>
-            </Carousel>
-          </div>
-          <div v-if="thrillerResults">
-            <h2>Thrillers</h2>
-            <Carousel
-              :value="thrillerResults"
-              :numVisible="8"
-              :numScroll="8"
-              :responsiveOptions="responsiveOptions"
-              :showIndicators="false"
-            >
-              <template #item="slotProps">
-                <div class="carousel-image-container">
-                  <div class="mb-3">
-                    <img
-                      :src="slotProps.data.posterURLs[185]"
-                      :alt="slotProps.data.name"
-                      @click="handleTitleClick(slotProps.data)"
-                      class="poster"
-                    />
-                  </div>
-                </div>
-              </template>
-            </Carousel>
-          </div>
-          <div v-if="actionResults">
-            <h2>Action</h2>
-            <Carousel
-              :value="actionResults"
-              :numVisible="8"
-              :numScroll="8"
-              :responsiveOptions="responsiveOptions"
-              :showIndicators="false"
-            >
-              <template #item="slotProps">
-                <div class="carousel-image-container">
-                  <div class="mb-3">
-                    <img
-                      :src="slotProps.data.posterURLs[185]"
-                      :alt="slotProps.data.name"
-                      @click="handleTitleClick(slotProps.data)"
-                      class="poster"
-                    />
-                  </div>
-                </div>
-              </template>
-            </Carousel>
-          </div>
-          <div v-if="dramaResults">
-            <h2>Drama</h2>
-            <Carousel
-              :value="dramaResults"
+              :value="resultsArray"
               :numVisible="8"
               :numScroll="8"
               :responsiveOptions="responsiveOptions"
@@ -271,6 +160,7 @@ const handleBackClick = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .p-carousel {
@@ -300,6 +190,28 @@ const handleBackClick = () => {
   width: 100%;
   justify-content: center;
   align-items: center;
+}
+
+.spinner {
+  width: 30% !important;
+  height: 30% !important;
+}
+
+.genre-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  background: transparent;
+  border: 2px solid var(--text-color);
+  border-radius: 20px;
+  color: var(--text-color);
+  margin: 0.5%;
+  font-weight: 700;
+  font-size: 1.3rem;
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0.19);
+  background-color: var(--surface-overlay);
 }
 
 @media (min-width: 1024px) {
@@ -342,6 +254,11 @@ const handleBackClick = () => {
   .poster {
     width: 100%;
     height: 100%;
+  }
+
+  .genre-badge {
+    margin: 3%;
+    font-size: 1rem;
   }
 }
 </style>
