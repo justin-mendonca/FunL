@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { RouterView } from 'vue-router'
-import { computed, reactive, provide, ref, nextTick, watchEffect, type Ref } from 'vue'
-import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { computed, reactive, provide, ref, nextTick, watchEffect, type Ref } from 'vue'
+import type { FetchedTitle } from '@/interfaces/fetchedTitle'
+import InputText from 'primevue/inputtext'
 import OverlayPanel from 'primevue/overlaypanel'
 import ProgressSpinner from 'primevue/progressspinner'
-import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast'
-import { useForm, useField } from 'vee-validate'
-import * as yup from 'yup'
+import { RouterView } from 'vue-router'
 import type { Services } from '@/interfaces/services'
 import type { SubscribedService } from '@/interfaces/subscribedService'
+import Toast from 'primevue/toast'
+import { useForm, useField } from 'vee-validate'
+import { useToast } from 'primevue/usetoast'
+import * as yup from 'yup'
+
 
 const toast = useToast()
 
+// State that is injected into lower components
 const services: Services = reactive({
   netflix: false,
   apple: false,
@@ -27,6 +30,9 @@ const services: Services = reactive({
   starz: false,
   paramount: false
 })
+
+const searchResults = reactive([])
+const cachedResults = ref<Record<string, FetchedTitle[]>>({})
 
 const isLoggedIn = ref(!!localStorage.getItem('jwtToken'))
 const authRequestPending = ref(false)
@@ -60,8 +66,6 @@ watchEffect(async () => {
     }
   }
 })
-
-const searchResults = reactive([])
 
 const menuItems = ref([
   { label: 'Library', icon: 'pi pi-images', to: '/' },
@@ -188,6 +192,7 @@ provide('services', services)
 provide('searchResults', searchResults)
 provide('menuItems', menuItems)
 provide('isLoggedIn', isLoggedIn)
+provide('cachedResults', cachedResults)
 </script>
 
 <template>

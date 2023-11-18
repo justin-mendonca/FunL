@@ -10,8 +10,9 @@ import type { FetchedTitle } from '@/interfaces/fetchedTitle'
 import type { SubscribedService } from '@/interfaces/subscribedService'
 
 // Pull in global state
+const cachedResults = inject<Record<string, FetchedTitle[]>>('cachedResults')!
 const searchResults = inject<FetchedTitle[]>('searchResults')!
-const services = inject('services') as any;
+const services = inject('services') as any
 
 // Local state
 const selectedTitle = ref<FetchedTitle | null>(null)
@@ -36,16 +37,23 @@ const responsiveOptions = ref([
 ])
 
 const filteredGenreMap = computed(() => {
-  const filteredMap: Record<string, FetchedTitle[]> = {}
-
-  for (const [genre, resultsArray] of genreMap.value) {
-    if (resultsArray.length > 0) {
-      filteredMap[genre] = resultsArray
-    }
+  console.log('is this running?')
+  if (!Object.entries(cachedResults.value).length) {
+    console.log("Results aren't cached")
+    cacheResults(genreMap.value)
   }
 
-  return filteredMap
+  console.log(cachedResults.value)
+  return cachedResults.value
 })
+
+const cacheResults = (genreMap: Map<string, FetchedTitle[]>) => {
+  for (const [genre, resultsArray] of genreMap) {
+    if (resultsArray.length > 0) {
+      cachedResults.value[genre] = resultsArray
+    }
+  }
+}
 
 const getUserData = async (subscriptionResponse: any) => {
   const arr: string[] = []
@@ -82,7 +90,7 @@ const getUserData = async (subscriptionResponse: any) => {
 
 const getSelectedServicesData = async (servicesArr: string[]) => {
   const arr: string[] = []
-  
+
   for (const platformName in services) {
     if (services[platformName] === true) arr.push(platformName)
   }
@@ -112,45 +120,49 @@ const getSelectedServicesData = async (servicesArr: string[]) => {
 }
 
 onMounted(async () => {
-  const isLoggedIn = !!localStorage.getItem('jwtToken')
-
-  let servicesAreSelected = false
-
-  const arr: string[] = []
-  
-  for (const platformName in services) {
-    if (services[platformName] === true) {
-      servicesAreSelected = true;
-      arr.push(platformName)
-    }
-  }
-
-  if (!isLoggedIn && !servicesAreSelected) {
+  if (Object.entries(cachedResults.value).length) {
     isLoading.value = false
-    return
-  }
+  } else {
+    const isLoggedIn = !!localStorage.getItem('jwtToken')
 
-  if (isLoggedIn) {
-    const jwtToken = localStorage.getItem('jwtToken')
+    let servicesAreSelected = false
 
-    const axiosConfig = {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json'
+    const arr: string[] = []
+
+    for (const platformName in services) {
+      if (services[platformName] === true) {
+        servicesAreSelected = true
+        arr.push(platformName)
       }
     }
 
-    const response = await axios.get(
-      'https://jpmoregain-001-site1.gtempurl.com/subscriptions',
-      axiosConfig
-    )
-    if (response.status === 200) {
-      await getUserData(response)
+    if (!isLoggedIn && !servicesAreSelected) {
+      isLoading.value = false
+      return
     }
-  } else if (!isLoggedIn) {
-    await getSelectedServicesData(arr)
-  } else {
-    isLoading.value = false
+
+    if (isLoggedIn) {
+      const jwtToken = localStorage.getItem('jwtToken')
+
+      const axiosConfig = {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+
+      const response = await axios.get(
+        'https://jpmoregain-001-site1.gtempurl.com/subscriptions',
+        axiosConfig
+      )
+      if (response.status === 200) {
+        await getUserData(response)
+      }
+    } else if (!isLoggedIn) {
+      await getSelectedServicesData(arr)
+    } else {
+      isLoading.value = false
+    }
   }
 })
 
