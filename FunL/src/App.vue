@@ -14,7 +14,6 @@ import { useForm, useField } from 'vee-validate'
 import { useToast } from 'primevue/usetoast'
 import * as yup from 'yup'
 
-
 const toast = useToast()
 
 // State that is injected into lower components
@@ -32,10 +31,10 @@ const services: Services = reactive({
 })
 
 const searchResults = reactive([])
-const cachedResults = ref<Record<string, FetchedTitle[]>>({})
+const cachedResults = reactive<Record<string, FetchedTitle[]>>({})
 
-const isLoggedIn = ref(!!localStorage.getItem('jwtToken'))
-const authRequestPending = ref(false)
+const isLoggedIn = ref<boolean>(!!localStorage.getItem('jwtToken'))
+const authRequestPending = ref<boolean>(false)
 
 watchEffect(async () => {
   isLoggedIn.value = !!localStorage.getItem('jwtToken')
@@ -185,6 +184,10 @@ const logout = () => {
   localStorage.removeItem('jwtToken')
   isLoggedIn.value = false
   searchResults.length = 0
+
+  for (const service in services) {
+    services[service] = false
+  }
 }
 
 // provide global state
@@ -332,6 +335,19 @@ provide('cachedResults', cachedResults)
   font-weight: 600;
 }
 
+.form-container {
+  min-width: 270px;
+  min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+    width: 150px !important;
+    height: 150px !important;
+  }
+
 @media (min-width: 1024px) {
   .nav {
     padding: 0 10px;
@@ -341,13 +357,6 @@ provide('cachedResults', cachedResults)
     margin-right: auto;
   }
 
-  .form-container {
-    min-width: 270px;
-    min-height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   .auth-form {
     display: flex;
     flex-direction: column;
@@ -405,13 +414,6 @@ provide('cachedResults', cachedResults)
     padding-right: 4px;
   }
 
-  .form-container {
-    min-width: 270px;
-    min-height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   .auth-form {
     display: flex;
     flex-direction: column;
@@ -469,12 +471,6 @@ provide('cachedResults', cachedResults)
     margin-left: auto;
   }
 
-  .form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   .auth-form {
     display: flex;
     flex-direction: column;
@@ -497,11 +493,6 @@ provide('cachedResults', cachedResults)
   .swap-form {
     font-size: 0.95em;
     margin-top: -10px;
-  }
-
-  .spinner {
-    width: 200px;
-    height: 200px;
   }
 }
 </style>

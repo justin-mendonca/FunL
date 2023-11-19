@@ -1,4 +1,5 @@
 export interface Services {
+    [key: string]: boolean
     netflix: boolean
     apple: boolean
     hulu: boolean

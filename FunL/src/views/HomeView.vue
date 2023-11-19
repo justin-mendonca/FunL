@@ -37,20 +37,17 @@ const responsiveOptions = ref([
 ])
 
 const filteredGenreMap = computed(() => {
-  console.log('is this running?')
-  if (!Object.entries(cachedResults.value).length) {
-    console.log("Results aren't cached")
+  if (!Object.entries(cachedResults).length) {
     cacheResults(genreMap.value)
   }
 
-  console.log(cachedResults.value)
-  return cachedResults.value
+  return cachedResults
 })
 
 const cacheResults = (genreMap: Map<string, FetchedTitle[]>) => {
   for (const [genre, resultsArray] of genreMap) {
     if (resultsArray.length > 0) {
-      cachedResults.value[genre] = resultsArray
+      cachedResults[genre]= resultsArray
     }
   }
 }
@@ -120,7 +117,7 @@ const getSelectedServicesData = async (servicesArr: string[]) => {
 }
 
 onMounted(async () => {
-  if (Object.entries(cachedResults.value).length) {
+  if (Object.entries(cachedResults).length) {
     isLoading.value = false
   } else {
     const isLoggedIn = !!localStorage.getItem('jwtToken')
@@ -229,6 +226,7 @@ const handleBackClick = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
 }
 
 .p-carousel {
@@ -254,7 +252,8 @@ const handleBackClick = () => {
 }
 
 #title-image-container {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   justify-content: center;
   align-items: center;

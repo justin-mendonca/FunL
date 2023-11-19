@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import axios from 'axios'
 import Button from 'primevue/button'
-import { inject } from 'vue'
+import { type Ref, inject } from 'vue'
 import router from '../router'
 import ServicePicker from '@/components/ServicePicker.vue'
 import type { Services } from '@/interfaces/services'
 import { useToast } from 'primevue/usetoast'
 
-const isLoggedIn = inject<boolean>('isLoggedIn')
+const isLoggedIn = inject<Ref<boolean>>('isLoggedIn')!;
 const services = inject<Services>('services')
 const toast = useToast()
 
 const routeAndSave = async () => {
   router.push('/')
 
-  if (isLoggedIn) {
+  if (isLoggedIn.value === true) {
     try {
       const jwtToken = localStorage.getItem('jwtToken')
 
